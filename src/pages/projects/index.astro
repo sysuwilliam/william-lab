@@ -6,7 +6,9 @@ const allProjects = (await getCollection("projects", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const teamProjects = allProjects.filter((project) => project.data.team);
-const personalProjects = allProjects.filter((project) => !project.data.team);
+const isPrivateProject = (project: (typeof allProjects)[number]) => project.data.tags.includes("private");
+const privateProjects = allProjects.filter(isPrivateProject);
+const personalProjects = allProjects.filter((project) => !project.data.team && !isPrivateProject(project));
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
@@ -16,7 +18,7 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
   <header class="page-title">
     <p class="eyebrow">/projects</p>
     <h1>项目</h1>
-    <p class="lead">公开仓库按个人项目和团队项目分开展示，重点呈现嵌入式、开发板、视觉和网站工程记录。</p>
+    <p class="lead">项目按团队项目、个人公开项目和私有项目分开展示，重点呈现嵌入式、开发板、视觉和学习记录。</p>
   </header>
 
   {teamProjects.length > 0 && (
@@ -65,4 +67,29 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
       ))}
     </div>
   </section>
+
+  {privateProjects.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">private repos</p>
+          <h2>私有项目</h2>
+          <p>这些仓库不公开源码，只展示方向、状态和技术栈。</p>
+        </div>
+      </div>
+      <div class="grid">
+        {privateProjects.map((project) => (
+          <a class="card" href={withBase(`projects/${project.id}/`)}>
+            <h3>{project.data.title}</h3>
+            <p>{project.data.description}</p>
+            <div class="card-meta">
+              <span class="status archived">private</span>
+              <span class={`status ${project.data.status}`}>{project.data.status}</span>
+              {project.data.stack.slice(0, 4).map((item) => <span class="tag">{item}</span>)}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>

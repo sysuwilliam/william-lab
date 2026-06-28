@@ -12,6 +12,7 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
+const isPrivateProject = project.data.tags.includes("private");
 ---
 
 <ContentLayout
@@ -21,8 +22,12 @@ const { Content } = await render(project);
   tags={project.data.tags}
 >
   <div class="card">
-    <p><strong>Repository:</strong> <a href={project.data.repo}>{project.data.repo}</a></p>
-    {project.data.homepage && <p><strong>Homepage:</strong> <a href={project.data.homepage}>{project.data.homepage}</a></p>}
+    {isPrivateProject ? (
+      <p><strong>Visibility:</strong> <span class="status archived">private</span></p>
+    ) : (
+      <p><strong>Repository:</strong> <a href={project.data.repo}>{project.data.repo}</a></p>
+    )}
+    {!isPrivateProject && project.data.homepage && <p><strong>Homepage:</strong> <a href={project.data.homepage}>{project.data.homepage}</a></p>}
     <p><strong>Status:</strong> <span class={`status ${project.data.status}`}>{project.data.status}</span></p>
   </div>
   <Content />

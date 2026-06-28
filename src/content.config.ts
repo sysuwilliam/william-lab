@@ -28,6 +28,7 @@ const projectCollection = defineCollection({
     status: z.enum(["active", "archived", "learning"]),
     stack: z.array(z.string()).default([]),
     team: z.boolean().default(false),
+    private: z.boolean().default(false),
     role: z.string().optional()
   })
 });
