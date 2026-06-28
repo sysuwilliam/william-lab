@@ -1,0 +1,31 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { withSiteBase } from "../site.config";
+---
+
+<BaseLayout title="404" description="Page not found." canonicalPath="/404.html">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">/404</p>
+      <h1>没有这个页面</h1>
+      <p class="lead">这个路径没有对应的静态文件。回到首页，或者从文章、项目和资源入口继续浏览。</p>
+      <div class="hero-actions">
+        <a class="button primary" href={withSiteBase("")}>home</a>
+        <a class="button" href={withSiteBase("articles/")}>articles</a>
+        <a class="button" href={withSiteBase("projects/")}>projects</a>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span>route.check</span>
+      </div>
+      <pre class="terminal-body"><span class="prompt">$</span> curl /unknown
+status: 404
+fallback: /william-lab/
+next: open index</pre>
+    </div>
+  </section>
+</BaseLayout>

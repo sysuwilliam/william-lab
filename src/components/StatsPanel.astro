@@ -1,0 +1,23 @@
+---
+interface StatItem {
+  label: string;
+  value: string | number;
+  tone?: "accent" | "blue" | "muted";
+}
+
+interface Props {
+  items: StatItem[];
+  compact?: boolean;
+}
+
+const { items, compact = false } = Astro.props;
+---
+
+<div class:list={["stats-panel", compact && "compact"]}>
+  {items.map((item) => (
+    <div class="stat-cell">
+      <span class="stat-label">{item.label}</span>
+      <strong class:list={["stat-value", item.tone]}>{item.value}</strong>
+    </div>
+  ))}
+</div>

@@ -6,9 +6,21 @@ interface Props {
   description: string;
   date?: Date;
   tags?: string[];
+  canonicalPath?: string;
+  ogType?: "website" | "article";
+  showReadingProgress?: boolean;
 }
 
-const { title, description, date, tags = [] } = Astro.props;
+const {
+  title,
+  description,
+  date,
+  tags = [],
+  canonicalPath,
+  ogType = "website",
+  showReadingProgress = false
+} = Astro.props;
+const hasAside = Astro.slots.has("aside");
 const formattedDate = date?.toLocaleDateString("zh-CN", {
   year: "numeric",
   month: "2-digit",
@@ -16,7 +28,13 @@ const formattedDate = date?.toLocaleDateString("zh-CN", {
 });
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  ogType={ogType}
+  showReadingProgress={showReadingProgress}
+>
   <article>
     <header class="article-header">
       {formattedDate && <p class="article-date">{formattedDate}</p>}
@@ -28,8 +46,15 @@ const formattedDate = date?.toLocaleDateString("zh-CN", {
         </div>
       )}
     </header>
-    <div class="prose">
-      <slot />
+    <div class:list={["article-shell", hasAside && "with-aside"]}>
+      <div class="article-main prose">
+        <slot />
+      </div>
+      {hasAside && (
+        <aside class="article-aside">
+          <slot name="aside" />
+        </aside>
+      )}
     </div>
   </article>
 </BaseLayout>

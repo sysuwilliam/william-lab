@@ -2,23 +2,45 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import TerminalPanel from "@components/TerminalPanel.astro";
+import StatsPanel from "@components/StatsPanel.astro";
+import { siteConfig } from "../site.config";
 
-const articles = (await getCollection("articles", ({ data }) => !data.draft))
+const allArticles = await getCollection("articles", ({ data }) => !data.draft);
+const allProjects = await getCollection("projects", ({ data }) => !data.draft);
+const allResources = await getCollection("resources", ({ data }) => !data.draft);
+
+const articles = [...allArticles]
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const projects = (await getCollection("projects", ({ data }) => !data.draft))
-  .filter((project) => !project.data.team)
+const isPrivateProject = (project: (typeof allProjects)[number]) => project.data.private || project.data.tags.includes("private");
+const projects = [...allProjects]
+  .filter((project) => !project.data.team && !isPrivateProject(project))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const teamProjects = (await getCollection("projects", ({ data }) => !data.draft && data.team))
+const teamProjects = [...allProjects]
+  .filter((project) => project.data.team)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 1);
 
-const resources = (await getCollection("resources", ({ data }) => !data.draft))
+const resources = [...allResources]
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
+
+const seriesCount = new Set(allArticles.map((article) => article.data.series).filter(Boolean)).size;
+const publicProjectCount = allProjects.filter((project) => !project.data.team && !isPrivateProject(project)).length;
+const privateProjectCount = allProjects.filter(isPrivateProject).length;
+const teamProjectCount = allProjects.filter((project) => project.data.team).length;
+const stats = [
+  { label: "articles", value: allArticles.length, tone: "accent" },
+  { label: "series", value: seriesCount, tone: "blue" },
+  { label: "public.repos", value: publicProjectCount },
+  { label: "private.notes", value: privateProjectCount },
+  { label: "team", value: teamProjectCount },
+  { label: "views", value: siteConfig.goatCounterCode ? "loading" : "stats pending", tone: "muted" },
+  { label: "latest.commit", value: siteConfig.latestCommit, tone: "blue" }
+];
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
@@ -26,7 +48,7 @@ const urlFor = (section: string, id: string) => withBase(`${section}/${id}/`);
 const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
 ---
 
-<BaseLayout title="个人网站" description="A compact personal site for engineering notes, GitHub projects, and resources.">
+<BaseLayout title="个人网站" description={siteConfig.description} canonicalPath="/">
   <section class="hero">
     <div>
       <p class="eyebrow reveal" style="--delay: 0ms">~/public-notes</p>
@@ -44,6 +66,16 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
     <div class="hero-terminal reveal" style="--delay: 280ms">
       <TerminalPanel title="profile.session" />
     </div>
+  </section>
+
+  <section class="section compact-section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">site status</p>
+        <h2>站点状态</h2>
+      </div>
+    </div>
+    <StatsPanel items={stats} />
   </section>
 
   <section class="section">

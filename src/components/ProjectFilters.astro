@@ -1,0 +1,19 @@
+---
+const filters = [
+  { id: "all", label: "all" },
+  { id: "embedded", label: "embedded" },
+  { id: "web", label: "web" },
+  { id: "vision", label: "vision" },
+  { id: "learning", label: "learning" },
+  { id: "private", label: "private" },
+  { id: "team", label: "team" }
+];
+---
+
+<div class="filter-bar" data-project-filters>
+  {filters.map((filter) => (
+    <button class="filter-button" type="button" data-filter={filter.id} aria-pressed={filter.id === "all" ? "true" : "false"}>
+      {filter.label}
+    </button>
+  ))}
+</div>

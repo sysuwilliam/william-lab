@@ -1,0 +1,26 @@
+---
+interface TocItem {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <nav class="toc-card" aria-label="Article table of contents">
+    <p class="eyebrow">contents</p>
+    <ol>
+      {items.map((item) => (
+        <li class={`depth-${item.depth}`}>
+          <a href={`#${item.slug}`}>{item.text}</a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

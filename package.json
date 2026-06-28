@@ -1,5 +1,5 @@
 {
-  "name": "engine-room-site",
+  "name": "william-lab",
   "type": "module",
   "version": "0.1.0",
   "private": true,
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",
+    "@astrojs/rss": "^4.0.18",
     "astro": "^7.0.3",
     "katex": "^0.17.0",
     "rehype-katex": "^7.0.1",

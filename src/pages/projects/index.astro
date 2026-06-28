@@ -1,17 +1,39 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import ProjectFilters from "@components/ProjectFilters.astro";
 
 const allProjects = (await getCollection("projects", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const teamProjects = allProjects.filter((project) => project.data.team);
-const isPrivateProject = (project: (typeof allProjects)[number]) => project.data.tags.includes("private");
+const isPrivateProject = (project: (typeof allProjects)[number]) => project.data.private || project.data.tags.includes("private");
 const privateProjects = allProjects.filter(isPrivateProject);
 const personalProjects = allProjects.filter((project) => !project.data.team && !isPrivateProject(project));
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
+
+const groupsForProject = (project: (typeof allProjects)[number]) => {
+  const text = [
+    project.id,
+    project.data.title,
+    project.data.description,
+    project.data.status,
+    ...project.data.tags,
+    ...project.data.stack
+  ].join(" ").toLowerCase();
+  const groups = new Set(["all", project.data.status, ...project.data.tags.map((tag) => tag.toLowerCase())]);
+
+  if (project.data.team) groups.add("team");
+  if (isPrivateProject(project)) groups.add("private");
+  if (/(arduino|frdm|ra4m2|sensor|stm32|hmi|zephyr|embedded|c\b|risc-v)/i.test(text)) groups.add("embedded");
+  if (/(astro|web|site|pages|wechat|javascript|typescript|miniprogram|github pages)/i.test(text)) groups.add("web");
+  if (/(yolo|opencv|vision|ai|camera)/i.test(text)) groups.add("vision");
+  if (/(learning|learn|study|review|leetcode|ysyx|micro-bit)/i.test(text)) groups.add("learning");
+
+  return [...groups].join(" ");
+};
 ---
 
 <BaseLayout title="项目" description="GitHub repositories and engineering projects.">
@@ -20,6 +42,8 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
     <h1>项目</h1>
     <p class="lead">项目按团队项目、个人公开项目和私有项目分开展示，重点呈现嵌入式、开发板、视觉和学习记录。</p>
   </header>
+
+  <ProjectFilters />
 
   {teamProjects.length > 0 && (
     <section class="section compact-section">
@@ -31,7 +55,7 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
       </div>
       <div class="list-grid">
         {teamProjects.map((project) => (
-          <a class="card feature-card" href={withBase(`projects/${project.id}/`)}>
+          <a class="card feature-card" href={withBase(`projects/${project.id}/`)} data-project-card data-groups={groupsForProject(project)}>
             <div>
               <span class="resource-kind">{project.data.role ?? "team"}</span>
               <h3>{project.data.title}</h3>
@@ -56,7 +80,7 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
     </div>
     <div class="grid">
       {personalProjects.map((project) => (
-        <a class="card" href={withBase(`projects/${project.id}/`)}>
+        <a class="card" href={withBase(`projects/${project.id}/`)} data-project-card data-groups={groupsForProject(project)}>
           <h3>{project.data.title}</h3>
           <p>{project.data.description}</p>
           <div class="card-meta">
@@ -79,7 +103,7 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
       </div>
       <div class="grid">
         {privateProjects.map((project) => (
-          <a class="card" href={withBase(`projects/${project.id}/`)}>
+          <a class="card" href={withBase(`projects/${project.id}/`)} data-project-card data-groups={groupsForProject(project)}>
             <h3>{project.data.title}</h3>
             <p>{project.data.description}</p>
             <div class="card-meta">

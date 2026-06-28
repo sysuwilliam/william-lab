@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import ContentLayout from "@layouts/ContentLayout.astro";
+import ArticleToc from "@components/ArticleToc.astro";
 
 export async function getStaticPaths() {
   const articles = await getCollection("articles", ({ data }) => !data.draft);
@@ -11,10 +12,15 @@ export async function getStaticPaths() {
 }
 
 const { article } = Astro.props;
-const { Content } = await render(article);
+const { Content, headings } = await render(article);
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
 const seriesSlug = article.id.split("/")[0];
+const readingText = article.body ?? "";
+const chineseChars = (readingText.match(/[\u4e00-\u9fff]/g) ?? []).length;
+const latinWords = (readingText.replace(/[\u4e00-\u9fff]/g, " ").match(/\b[\w-]+\b/g) ?? []).length;
+const readingMinutes = Math.max(1, Math.ceil(chineseChars / 420 + latinWords / 220));
+const tocItems = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
 <ContentLayout
@@ -22,13 +28,25 @@ const seriesSlug = article.id.split("/")[0];
   description={article.data.description}
   date={article.data.date}
   tags={article.data.tags}
+  canonicalPath={`/articles/${article.id}/`}
+  ogType="article"
+  showReadingProgress
 >
-  {article.data.series && (
-    <div class="card content-meta-card">
-      <p><strong>Series:</strong> <a href={withBase(`articles/series/${seriesSlug}/`)}>{article.data.series}</a></p>
-      {article.data.board && <p><strong>Board:</strong> {article.data.board}</p>}
-      {article.data.sourceUrl && <p><strong>Source:</strong> <a href={article.data.sourceUrl}>GitHub report</a></p>}
+  <div class="card content-meta-card">
+    <div class="content-meta-grid">
+      {article.data.series && (
+        <p><strong>Series</strong><a href={withBase(`articles/series/${seriesSlug}/`)}>{article.data.series}</a></p>
+      )}
+      {article.data.board && <p><strong>Board</strong><span>{article.data.board}</span></p>}
+      <p><strong>Read</strong><span>{readingMinutes} min</span></p>
+      <p><strong>Date</strong><span>{article.data.date.toLocaleDateString("zh-CN")}</span></p>
     </div>
-  )}
+    {article.data.sourceUrl && (
+      <p class="source-line"><strong>Source:</strong> <a href={article.data.sourceUrl}>GitHub report</a></p>
+    )}
+  </div>
   <Content />
+  <Fragment slot="aside">
+    <ArticleToc items={tocItems} />
+  </Fragment>
 </ContentLayout>

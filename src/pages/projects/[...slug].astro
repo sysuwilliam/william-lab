@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const isPrivateProject = project.data.tags.includes("private");
+const isPrivateProject = project.data.private || project.data.tags.includes("private");
 ---
 
 <ContentLayout
@@ -20,6 +20,7 @@ const isPrivateProject = project.data.tags.includes("private");
   description={project.data.description}
   date={project.data.date}
   tags={project.data.tags}
+  canonicalPath={`/projects/${project.id}/`}
 >
   <div class="card">
     {isPrivateProject ? (

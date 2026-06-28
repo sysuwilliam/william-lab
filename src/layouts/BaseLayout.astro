@@ -1,20 +1,40 @@
 ---
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
+import ReadingProgress from "@components/ReadingProgress.astro";
+import { absoluteUrl, siteConfig, withSiteBase } from "../site.config";
 import "@styles/global.css";
 
 interface Props {
   title?: string;
   description?: string;
+  canonicalPath?: string;
+  ogType?: "website" | "article";
+  showReadingProgress?: boolean;
 }
+
+const basePath = siteConfig.base.replace(/\/$/, "");
+const currentPath = Astro.url.pathname;
+const defaultCanonicalPath =
+  currentPath === basePath || currentPath === `${basePath}/`
+    ? "/"
+    : currentPath.startsWith(`${basePath}/`)
+      ? currentPath.slice(basePath.length)
+      : currentPath;
 
 const {
   title = "个人网站",
-  description = "A personal engineering notebook for articles, projects, and resources."
+  description = siteConfig.description,
+  canonicalPath = defaultCanonicalPath.startsWith("/") ? defaultCanonicalPath : `/${defaultCanonicalPath}`,
+  ogType = "website",
+  showReadingProgress = false
 } = Astro.props;
 
-const siteTitle = title === "个人网站" ? title : `${title} | 个人网站`;
+const siteTitle = title === "个人网站" ? siteConfig.title : `${title} | ${siteConfig.title}`;
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const canonicalUrl = absoluteUrl(canonicalPath);
+const hasGoatCounter = siteConfig.goatCounterCode.trim().length > 0;
+const goatCounterUrl = hasGoatCounter ? `https://${siteConfig.goatCounterCode}.goatcounter.com/count` : "";
 ---
 
 <!doctype html>
@@ -23,10 +43,20 @@ const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL :
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href={`${base}favicon.svg`} />
+    <link rel="alternate" type="application/rss+xml" title={`${siteConfig.title} RSS`} href={withSiteBase("rss.xml")} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={siteConfig.title} />
+    <meta name="twitter:card" content="summary" />
     <title>{siteTitle}</title>
+    {hasGoatCounter && <script data-goatcounter={goatCounterUrl} async src="//gc.zgo.at/count.js"></script>}
   </head>
-  <body>
+  <body data-goatcounter-enabled={hasGoatCounter ? "true" : "false"}>
+    {showReadingProgress && <ReadingProgress />}
     <Header />
     <main class="site-shell main">
       <slot />
@@ -37,51 +67,100 @@ const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL :
         const supportsFinePointer = window.matchMedia("(pointer: fine)").matches;
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        if (!supportsFinePointer || prefersReducedMotion) return;
+        if (supportsFinePointer && !prefersReducedMotion) {
+          const targets = document.querySelectorAll(".card, .terminal");
 
-        const targets = document.querySelectorAll(".card, .terminal");
+          targets.forEach((target) => {
+            let frame = 0;
+            let nextX = 0;
+            let nextY = 0;
 
-        targets.forEach((target) => {
-          let frame = 0;
-          let nextX = 0;
-          let nextY = 0;
-
-          const updateGlow = () => {
-            target.style.setProperty("--glow-x", `${nextX}px`);
-            target.style.setProperty("--glow-y", `${nextY}px`);
-            target.style.setProperty("--glow-opacity", target.classList.contains("terminal") ? "0.58" : "0.72");
-            frame = 0;
-          };
-
-          target.addEventListener("pointermove", (event) => {
-            const rect = target.getBoundingClientRect();
-            nextX = event.clientX - rect.left;
-            nextY = event.clientY - rect.top;
-
-            if (!frame) {
-              frame = window.requestAnimationFrame(updateGlow);
-            }
-          });
-
-          target.addEventListener("pointerleave", () => {
-            if (frame) {
-              window.cancelAnimationFrame(frame);
+            const updateGlow = () => {
+              target.style.setProperty("--glow-x", `${nextX}px`);
+              target.style.setProperty("--glow-y", `${nextY}px`);
+              target.style.setProperty("--glow-opacity", target.classList.contains("terminal") ? "0.58" : "0.72");
               frame = 0;
+            };
+
+            target.addEventListener("pointermove", (event) => {
+              const rect = target.getBoundingClientRect();
+              nextX = event.clientX - rect.left;
+              nextY = event.clientY - rect.top;
+
+              if (!frame) {
+                frame = window.requestAnimationFrame(updateGlow);
+              }
+            });
+
+            target.addEventListener("pointerleave", () => {
+              if (frame) {
+                window.cancelAnimationFrame(frame);
+                frame = 0;
+              }
+
+              target.style.setProperty("--glow-opacity", "0");
+            });
+
+            target.addEventListener("focusin", () => {
+              target.style.setProperty("--glow-x", "50%");
+              target.style.setProperty("--glow-y", "50%");
+              target.style.setProperty("--glow-opacity", target.classList.contains("terminal") ? "0.48" : "0.62");
+            });
+
+            target.addEventListener("focusout", () => {
+              target.style.setProperty("--glow-opacity", "0");
+            });
+          });
+        }
+
+        const progressBar = document.querySelector(".reading-progress span");
+        if (progressBar && !prefersReducedMotion) {
+          const updateProgress = () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+            progressBar.style.transform = `scaleX(${progress})`;
+          };
+          updateProgress();
+          window.addEventListener("scroll", updateProgress, { passive: true });
+          window.addEventListener("resize", updateProgress);
+        }
+
+        document.querySelectorAll(".prose pre").forEach((pre) => {
+          if (pre.querySelector(".copy-code")) return;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "copy-code";
+          button.textContent = "copy";
+          button.addEventListener("click", async () => {
+            const code = pre.querySelector("code")?.textContent ?? pre.textContent ?? "";
+            try {
+              await navigator.clipboard.writeText(code.trim());
+              button.textContent = "copied";
+              window.setTimeout(() => { button.textContent = "copy"; }, 1400);
+            } catch {
+              button.textContent = "failed";
+              window.setTimeout(() => { button.textContent = "copy"; }, 1400);
             }
-
-            target.style.setProperty("--glow-opacity", "0");
           });
-
-          target.addEventListener("focusin", () => {
-            target.style.setProperty("--glow-x", "50%");
-            target.style.setProperty("--glow-y", "50%");
-            target.style.setProperty("--glow-opacity", target.classList.contains("terminal") ? "0.48" : "0.62");
-          });
-
-          target.addEventListener("focusout", () => {
-            target.style.setProperty("--glow-opacity", "0");
-          });
+          pre.append(button);
         });
+
+        const filterRoot = document.querySelector("[data-project-filters]");
+        if (filterRoot) {
+          const buttons = filterRoot.querySelectorAll("[data-filter]");
+          const cards = document.querySelectorAll("[data-project-card]");
+          buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+              const filter = button.getAttribute("data-filter") ?? "all";
+              buttons.forEach((item) => item.setAttribute("aria-pressed", item === button ? "true" : "false"));
+              cards.forEach((card) => {
+                const groups = (card.getAttribute("data-groups") ?? "").split(" ");
+                const visible = filter === "all" || groups.includes(filter);
+                card.toggleAttribute("hidden", !visible);
+              });
+            });
+          });
+        }
       })();
     </script>
   </body>
