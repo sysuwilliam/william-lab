@@ -1,0 +1,296 @@
+---
+title: "使用Ubuntu系统运行开发版"
+description: "上一篇报告中已经介绍了 Arduino UNO Q 4GB 的硬件结构和基本能力。这一篇主要记录我在Ubuntu 系统上第一次初始化开发板、安装 Arduino App Lab、配置 Linux USB 权限并完成开发板"
+date: 2026-06-02
+tags: ["Arduino", "Linux", "OpenCV", "AI"]
+draft: false
+series: "Arduino UNO Q 4GB"
+board: "Arduino UNO Q 4GB"
+sourceUrl: "https://github.com/sysuwilliam/arduino-UNO-Q-4GB/blob/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/2.%E4%BD%BF%E7%94%A8Ubuntu%E7%B3%BB%E7%BB%9F%E8%BF%90%E8%A1%8C%E5%BC%80%E5%8F%91%E7%89%88.md"
+order: 2
+---
+[原始报告](https://github.com/sysuwilliam/arduino-UNO-Q-4GB/blob/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/2.%E4%BD%BF%E7%94%A8Ubuntu%E7%B3%BB%E7%BB%9F%E8%BF%90%E8%A1%8C%E5%BC%80%E5%8F%91%E7%89%88.md)
+
+# 使用 Ubuntu 系统初始化 Arduino UNO Q 和 Arduino App Lab
+
+上一篇报告中已经介绍了 Arduino UNO Q 4GB 的硬件结构和基本能力。这一篇主要记录我在**Ubuntu 系统**上第一次初始化开发板、安装 Arduino App Lab、配置 Linux USB 权限并完成开发板联网和软件更新的过程。
+
+## 一、整体流程
+
+在 Ubuntu 上使用 UNO Q 的完整初始化流程可以概括为：
+
+```text
+下载 Arduino App Lab
+    -> 安装 Linux 依赖 libwebkit2gtk-4.1
+    -> 配置 udev USB 访问权限
+    -> 使用 USB-C 连接 UNO Q
+    -> 在 App Lab 中识别并认证开发板
+    -> 配置开发板名称、密码和 Wi-Fi
+    -> 等待系统软件更新
+    -> 进入 App Lab 主界面并运行示例
+```
+
+第一次使用需要采用**USB 桌面模式**。因为开发板还没有配置 Wi-Fi，也没有设置名称和密码，必须先通过 USB 完成首次初始化。
+
+---
+
+## 二、硬件和系统准备
+
+### 1. 硬件准备
+
+
+- Arduino UNO Q 4GB 开发板
+- Ubuntu 主机
+- 支持数据传输的 USB-C 数据线
+
+
+### 2. Ubuntu 软件准备
+
+
+- `wget` 或浏览器，用于下载 App Lab 和 udev 安装脚本
+- `libwebkit2gtk-4.1-0`，用于运行 App Lab 的 Linux 桌面界面
+- udev 规则，用于允许普通用户访问 UNO Q 的 USB 设备
+- 可选的 `adb` 和 `ssh`，用于命令行访问开发板
+
+官方文档特别强调：Linux 用户如果不配置 USB 权限，开发板可能无法被 App Lab 正确检测，也可能在 ADB 中出现 `insufficient permissions`。
+
+---
+
+## 三、下载并解压 Arduino App Lab
+
+首先进入 Arduino 官方软件下载页面，下载 Linux 版本的 Arduino App Lab：
+
+- [Arduino Software - App Lab](https://www.arduino.cc/en/software/#app-lab-section)
+
+官方给出的 Linux 安装方式是下载 `.tar.gz` 压缩包后解压运行。
+
+在 Ubuntu 终端中，可以进入下载目录后执行：
+
+```bash
+cd ~/Downloads
+tar -xf ArduinoAppLab*.tar.gz
+```
+
+我先下载了App Lab压缩包，然后在文件管理器中完成解压：
+
+![App Lab 解压](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E8%A7%A3%E5%8E%8B.png)
+
+解压后可以把目录移动到桌面或应用目录中，方便后续启动：
+
+```bash
+mv ArduinoAppLab*/ ~/Desktop/
+```
+
+App Lab 本质上是一个桌面应用，不需要像传统软件一样复杂安装。只要依赖齐全，进入解压后的目录运行可执行文件即可。
+
+---
+
+## 四、安装 App Lab 所需的 WebKit 依赖
+
+在 Ubuntu 上第一次启动 App Lab 时，最常见的问题是缺少 `libwebkit2gtk-4.1-0`。官方 Linux 安装说明中也明确写到，需要安装这个依赖才能运行 App Lab。
+
+安装命令如下：
+
+```bash
+sudo apt update
+sudo apt install libwebkit2gtk-4.1-0
+```
+
+![安装 libwebkit](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/libwebkit.png)
+
+
+这个依赖主要用于 App Lab 的桌面界面渲染。如果没有安装，App Lab 可能会无法启动，或者启动后界面异常。
+
+---
+
+## 五、第一次启动 App Lab
+
+依赖安装完成后，进入 App Lab 解压目录，运行启动程序：
+
+```bash
+cd ~/Desktop/ArduinoAppLab*
+./arduino-app-lab
+```
+
+App Lab 启动后，如果此时还没有连接 UNO Q，界面会显示当前没有可用开发板：
+
+![App Lab 未连接开发板](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E6%9C%AA%E8%BF%9E%E6%8E%A5.png)
+
+这个状态是正常的。下一步需要先配置 Ubuntu 的 USB 权限，否则即使用 USB-C 连接了开发板，App Lab 也可能无法正常识别。
+
+---
+
+## 六、配置 Ubuntu 的 udev USB 权限
+### 1. udev规则
+UNO Q 在 Linux 主机上会以 USB 设备形式出现。普通用户默认不一定具有读写权限，因此 Arduino 官方要求 Linux 用户安装 udev 规则。
+
+如果不配置规则，常见现象包括：
+
+- App Lab 识别不到开发板
+- ADB 显示 `insufficient permissions`
+- 刷写或更新流程失败
+
+官方提供的 udev 规则示例如下：
+
+```text
+# Operating mode
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0078", MODE="0660", TAG+="uaccess"
+# EDL mode
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="05c6", ATTRS{idProduct}=="9008", MODE="0660", TAG+="uaccess"
+```
+
+![官方 udev 规则说明](https://docs.arduino.cc/static/31b990a2b0b3ec1d1bf67e0dfae97d44/a6d36/udev_rules_2.png)
+
+### 2. 使用官方脚本自动配置
+
+官方推荐直接使用 ArduinoCore-zephyr 仓库中的 `post_install.sh` 脚本自动安装规则。我就是使用的这种方法。
+
+先通过 `wget` 下载脚本：
+
+```bash
+cd ~/Downloads
+wget https://raw.githubusercontent.com/arduino/ArduinoCore-zephyr/main/post_install.sh
+```
+
+
+然后添加执行权限并运行：
+
+```bash
+chmod +x post_install.sh
+sudo ./post_install.sh
+```
+
+脚本执行后会把需要的 udev 规则导入系统：
+
+![导入 udev rules](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/%E5%AF%BC%E5%85%A5rules.png)
+
+做完上述操作后注意重启系统，使规则成功导入。
+
+### 3. 查看规则是否生效
+
+安装完成后，可以使用下面的命令查看规则文件：
+
+```bash
+cat /etc/udev/rules.d/60-arduino-zephyr.rules
+```
+
+验证结果如下：
+
+![查看 udev rules](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/%E6%9F%A5%E7%9C%8Brules.png)
+
+配置完成后需要重新加载规则：
+
+```bash
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+然后拔掉 UNO Q，等待几秒后重新插入。
+
+---
+
+## 七、通过 USB-C 连接 UNO Q
+
+udev 权限配置完成后，使用 USB-C 数据线连接 UNO Q 和 Ubuntu 主机。开发板启动需要一段时间，LED 矩阵动画还在播放时说明系统仍在启动。
+
+连接新开发板后，App Lab 识别到了待配置的 UNO Q：
+
+![App Lab 连接新开发板](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E8%BF%9E%E6%8E%A5%E6%96%B0%E6%9D%BF%E5%AD%90.png)
+
+---
+
+## 八、开发板初始化配置
+
+第一次连接 UNO Q 时，App Lab 会引导进行开发板初始化。这个过程主要包括：
+
+1. 选择并连接开发板
+2. 设置开发板名称
+3. 设置登录密码
+4. 配置 Wi-Fi 网络
+5. 检查并安装系统更新
+
+### 1. 开发板基础设置
+
+App Lab 会进入开发板配置页面，要求完成基础设置：
+
+![Board configuration](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/board%20configuration.png)
+
+这个步骤很关键，因为后续 SSH 连接和网络模式都依赖这里设置的开发板名称和密码。
+
+开发板名称设置完成后，可以通过：
+
+```bash
+ssh arduino@<boardname>.local
+```
+
+在同一局域网内访问开发板。这里的 `<boardname>` 就是初始化时设置的名称。
+
+### 2. 网络配置
+
+接着配置 Wi-Fi。UNO Q 的 Linux 系统和 App Lab 更新都需要网络，后续网络模式、SSH、Web UI 示例也依赖开发板连接到局域网。
+
+![Network setup](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/network%20setup.png)
+
+
+官方文档说明，首次设置完成后，开发板会记住 Wi-Fi。之后如果电脑和开发板在同一局域网中，就可以在 App Lab 中使用网络模式连接。如果更换了 Wi-Fi，通常需要再次通过 USB 连接开发板来配置新网络。
+
+---
+
+## 九、系统软件更新
+
+UNO Q 出厂系统通常会在首次连接时检查更新。Arduino 官方说明中提到，开发板上的 Linux 系统和 App Lab 组件会自动接收更新，更新过程需要网络连接。
+
+软件更新页面：
+
+![Software update](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/software%20update.png)
+
+这个步骤需要耐心等待，不要中途拔掉电源或断开 USB。因为 UNO Q 本质上运行完整的 Linux 系统，更新过程中如果强制断电，可能会导致系统状态不完整。
+
+更新完成后，App Lab 会显示开发板处于可用状态：
+
+![开发板可用](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/available.png)
+
+此时选择Available on your network，进一步根据指引完成SSH配置，以后就可以通过网络来连接开发板，而不需要USB连接了。
+
+---
+
+## 十、进入Arduino App Lab
+完成上述初始化配置后，就可以成功进入软件开发界面了：
+![App Lab 二次认证](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E8%AE%A4%E8%AF%812.png)
+
+![成功进入 App Lab](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/%E6%88%90%E5%8A%9F%E8%BF%9B%E5%85%A5applab.png)
+
+## 十一、跑例程
+连上开发板的第一件事肯定是跑例程，我录制了一个视频，演示了从开发板上电到运行部分例程和我写的程序的操作。视频中所运行到的程序有：
+- Blink LED
+- Blink LED with UI
+- Weather Forecast
+- Detect Objects on Smartphone Camera
+- 自定义滚动字幕显示程序
+
+[演示视频](https://www.bilibili.com/video/BV1dd5C69EYd/?vd_source=60d065059e2c6e0f930dd78d84d804a2#reply116565529854229)
+
+
+---
+## 十二、总结
+现在相当于可以正式玩转这块开发板了，我在下一个帖子中会重点描述Arduino App Lab的开发指南，同时创作一些有意思的小项目。
+
+
+
+## 附件
+
+本文参考了 Arduino 官方文档，主要对应以下官方说明：
+
+| 内容 | 官方文档 |
+|------|----------|
+| UNO Q 用户手册 | [Arduino UNO Q User Manual](https://docs.arduino.cc/tutorials/uno-q/user-manual/) |
+| App Lab 入门 | [Getting Started with Arduino App Lab](https://docs.arduino.cc/software/app-lab/) |
+| App Lab Linux 安装 | [Setup Arduino App Lab on Linux](https://docs.arduino.cc/software/app-lab/setup/linux/) |
+| 开发板配置和更新 | [Connect, Configure, and Update boards in Arduino App Lab](https://docs.arduino.cc/software/app-lab/configure/config/) |
+| SSH 连接 | [Connect to UNO Q via Secure Shell](https://docs.arduino.cc/tutorials/uno-q/ssh/) |
+| App CLI | [Arduino App CLI](https://docs.arduino.cc/software/app-lab/tutorials/cli/) |
+
+---
+
+此外，我在github上建了一个仓库用于存放相关资料和上手指南，里面的内容会更为详细，部分例程和我写的项目有附带注释和讲解，欢迎大家来看:
+[https://github.com/sysuwilliam/arduino-UNO-Q-4GB.git](https://github.com/sysuwilliam/arduino-UNO-Q-4GB.git)

@@ -2,8 +2,11 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 
-const projects = (await getCollection("projects", ({ data }) => !data.draft))
+const allProjects = (await getCollection("projects", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const teamProjects = allProjects.filter((project) => project.data.team);
+const personalProjects = allProjects.filter((project) => !project.data.team);
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
@@ -13,19 +16,53 @@ const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
   <header class="page-title">
     <p class="eyebrow">/projects</p>
     <h1>项目</h1>
-    <p class="lead">展示 GitHub 仓库、技术栈、当前状态和可公开的工程记录。</p>
+    <p class="lead">公开仓库按个人项目和团队项目分开展示，重点呈现嵌入式、开发板、视觉和网站工程记录。</p>
   </header>
 
-  <div class="grid">
-    {projects.map((project) => (
-      <a class="card" href={withBase(`projects/${project.id}/`)}>
-        <h3>{project.data.title}</h3>
-        <p>{project.data.description}</p>
-        <div class="card-meta">
-          <span class={`status ${project.data.status}`}>{project.data.status}</span>
-          {project.data.stack.map((item) => <span class="tag">{item}</span>)}
+  {teamProjects.length > 0 && (
+    <section class="section compact-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">team project</p>
+          <h2>团队项目</h2>
         </div>
-      </a>
-    ))}
-  </div>
+      </div>
+      <div class="list-grid">
+        {teamProjects.map((project) => (
+          <a class="card feature-card" href={withBase(`projects/${project.id}/`)}>
+            <div>
+              <span class="resource-kind">{project.data.role ?? "team"}</span>
+              <h3>{project.data.title}</h3>
+              <p>{project.data.description}</p>
+            </div>
+            <div class="card-meta">
+              <span class={`status ${project.data.status}`}>{project.data.status}</span>
+              {project.data.stack.map((item) => <span class="tag">{item}</span>)}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">personal repos</p>
+        <h2>个人公开项目</h2>
+      </div>
+    </div>
+    <div class="grid">
+      {personalProjects.map((project) => (
+        <a class="card" href={withBase(`projects/${project.id}/`)}>
+          <h3>{project.data.title}</h3>
+          <p>{project.data.description}</p>
+          <div class="card-meta">
+            <span class={`status ${project.data.status}`}>{project.data.status}</span>
+            {project.data.stack.slice(0, 4).map((item) => <span class="tag">{item}</span>)}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 </BaseLayout>

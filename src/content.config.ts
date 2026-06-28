@@ -12,7 +12,12 @@ const baseEntrySchema = z.object({
 
 const articleCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/articles" }),
-  schema: baseEntrySchema
+  schema: baseEntrySchema.extend({
+    series: z.string().optional(),
+    board: z.string().optional(),
+    sourceUrl: z.url().optional(),
+    order: z.number().int().optional()
+  })
 });
 
 const projectCollection = defineCollection({
@@ -21,7 +26,9 @@ const projectCollection = defineCollection({
     repo: z.url(),
     homepage: z.url().optional(),
     status: z.enum(["active", "archived", "learning"]),
-    stack: z.array(z.string()).default([])
+    stack: z.array(z.string()).default([]),
+    team: z.boolean().default(false),
+    role: z.string().optional()
   })
 });
 

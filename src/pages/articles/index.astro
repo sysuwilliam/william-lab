@@ -3,29 +3,99 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 
 const articles = (await getCollection("articles", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort((a, b) => {
+    const seriesCompare = (a.data.series ?? "").localeCompare(b.data.series ?? "", "zh-CN");
+    if (seriesCompare !== 0) return seriesCompare;
+    return (a.data.order ?? 999) - (b.data.order ?? 999) || b.data.date.valueOf() - a.data.date.valueOf();
+  });
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
+const seriesSlug = (articleId: string) => articleId.split("/")[0];
+
+const seriesMap = new Map<string, { slug: string; title: string; board: string; description: string; tags: string[]; articles: typeof articles }>();
+
+for (const article of articles) {
+  if (!article.data.series) continue;
+  const slug = seriesSlug(article.id);
+  const existing = seriesMap.get(slug);
+  if (existing) {
+    existing.articles.push(article);
+    for (const tag of article.data.tags) {
+      if (!existing.tags.includes(tag)) existing.tags.push(tag);
+    }
+    continue;
+  }
+  seriesMap.set(slug, {
+    slug,
+    title: article.data.series,
+    board: article.data.board ?? article.data.series,
+    description: article.data.description,
+    tags: [...article.data.tags],
+    articles: [article]
+  });
+}
+
+const seriesList = [...seriesMap.values()].sort((a, b) => {
+  const priority = ["arduino-uno-q-4gb", "frdm-mcxn947", "ra4m2-sensor"];
+  return priority.indexOf(a.slug) - priority.indexOf(b.slug);
+});
+
+const latestArticles = [...articles]
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 8);
 ---
 
-<BaseLayout title="文章" description="Technical articles and engineering notes.">
+<BaseLayout title="文章" description="开发板专栏、工程报告和技术笔记。">
   <header class="page-title">
     <p class="eyebrow">/articles</p>
-    <h1>文章</h1>
-    <p class="lead">把调试过程、项目复盘、数学推导和工具链经验沉淀成可检索的笔记。</p>
+    <h1>开发板专栏</h1>
+    <p class="lead">按开发板整理公开报告，把环境搭建、链路调试、工程踩坑和部署记录放在同一个入口。</p>
   </header>
 
-  <div class="list-grid">
-    {articles.map((article) => (
-      <a class="card" href={withBase(`articles/${article.id}/`)}>
-        <h3>{article.data.title}</h3>
-        <p>{article.data.description}</p>
-        <div class="card-meta">
-          <span class="tag">{article.data.date.toLocaleDateString("zh-CN")}</span>
-          {article.data.tags.map((tag) => <span class="tag">{tag}</span>)}
-        </div>
-      </a>
-    ))}
-  </div>
+  <section class="section compact-section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">board series</p>
+        <h2>专栏索引</h2>
+      </div>
+    </div>
+    <div class="grid series-grid">
+      {seriesList.map((series) => (
+        <a class="card series-card" href={withBase(`articles/series/${series.slug}/`)}>
+          <span class="resource-kind">{series.board}</span>
+          <h3>{series.title}</h3>
+          <p>{series.description}</p>
+          <div class="card-meta">
+            <span class="tag">{series.articles.length} articles</span>
+            {series.tags.slice(0, 4).map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">latest</p>
+        <h2>最新文章</h2>
+      </div>
+    </div>
+    <div class="list-grid">
+      {latestArticles.map((article) => (
+        <a class="card article-row" href={withBase(`articles/${article.id}/`)}>
+          <div>
+            <span class="resource-kind">{article.data.series ?? "notes"}</span>
+            <h3>{article.data.title}</h3>
+            <p>{article.data.description}</p>
+          </div>
+          <div class="card-meta article-row-meta">
+            <span class="tag">{article.data.date.toLocaleDateString("zh-CN")}</span>
+            {article.data.tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 </BaseLayout>

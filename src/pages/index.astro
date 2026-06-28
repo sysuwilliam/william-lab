@@ -8,8 +8,13 @@ const articles = (await getCollection("articles", ({ data }) => !data.draft))
   .slice(0, 3);
 
 const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .filter((project) => !project.data.team)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
+
+const teamProjects = (await getCollection("projects", ({ data }) => !data.draft && data.team))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 1);
 
 const resources = (await getCollection("resources", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -27,8 +32,8 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
       <p class="eyebrow reveal" style="--delay: 0ms">~/public-notes</p>
       <h1 class="reveal" style="--delay: 70ms"><span>William</span><span>Lab</span></h1>
       <p class="lead reveal" style="--delay: 140ms">
-        这里是一个面向工程实践的个人网站模板，用来放文章、GitHub 仓库和资源链接。
-        当前内容是占位版本，后续可以替换为真实昵称、项目和笔记。
+        这里整理开发板实验、嵌入式链路、视觉部署和公开 GitHub 项目。
+        内容以工程报告为主，尽量保留环境、命令、踩坑和验证结论。
       </p>
       <div class="hero-actions reveal" style="--delay: 210ms">
         <a class="button primary" href={withBase("articles/")}>read articles</a>
@@ -45,7 +50,7 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
     <div class="section-head">
       <div>
         <p class="eyebrow">articles</p>
-        <h2>最新文章</h2>
+        <h2>开发板笔记</h2>
       </div>
       <a class="button" href={withBase("articles/")}>all articles</a>
     </div>
@@ -66,7 +71,7 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
     <div class="section-head">
       <div>
         <p class="eyebrow">projects</p>
-        <h2>精选项目</h2>
+        <h2>个人项目</h2>
       </div>
       <a class="button" href={withBase("projects/")}>all projects</a>
     </div>
@@ -83,6 +88,33 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
       ))}
     </div>
   </section>
+
+  {teamProjects.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">team project</p>
+          <h2>团队项目</h2>
+        </div>
+        <a class="button" href={withBase("projects/")}>project index</a>
+      </div>
+      <div class="list-grid">
+        {teamProjects.map((project) => (
+          <a class="card feature-card" href={urlFor("projects", project.id)}>
+            <div>
+              <span class="resource-kind">{project.data.role ?? "team"}</span>
+              <h3>{project.data.title}</h3>
+              <p>{project.data.description}</p>
+            </div>
+            <div class="card-meta">
+              <span class={`status ${project.data.status}`}>{project.data.status}</span>
+              {project.data.stack.map((item) => <span class="tag">{item}</span>)}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="section-head">

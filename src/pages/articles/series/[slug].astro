@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const allArticles = await getCollection("articles", ({ data }) => !data.draft);
+  const grouped = new Map<string, typeof allArticles>();
+  for (const article of allArticles) {
+    if (!article.data.series) continue;
+    const slug = article.id.split("/")[0];
+    grouped.set(slug, [...(grouped.get(slug) ?? []), article]);
+  }
+  return [...grouped.entries()].map(([slug, articles]) => ({
+    params: { slug },
+    props: { slug, articles }
+  }));
+}
+
+const { slug, articles } = Astro.props;
+const sortedArticles = [...articles].sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999) || a.data.date.valueOf() - b.data.date.valueOf());
+const firstArticle = sortedArticles[0];
+const title = firstArticle.data.series ?? firstArticle.data.board ?? slug;
+const board = firstArticle.data.board ?? title;
+const tags = [...new Set(sortedArticles.flatMap((article) => article.data.tags))];
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+
+<BaseLayout title={title} description={`${board} 开发报告专栏。`}>
+  <header class="page-title">
+    <p class="eyebrow">/articles/series/{slug}</p>
+    <h1>{title}</h1>
+    <p class="lead">{board} 相关开发报告，按实践顺序整理。</p>
+    <div class="tag-row">
+      <span class="tag">{sortedArticles.length} articles</span>
+      {tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+  </header>
+
+  <div class="list-grid timeline-list">
+    {sortedArticles.map((article) => (
+      <a class="card article-row" href={withBase(`articles/${article.id}/`)}>
+        <div>
+          <span class="resource-kind">{String(article.data.order ?? "note").padStart(2, "0")}</span>
+          <h3>{article.data.title}</h3>
+          <p>{article.data.description}</p>
+        </div>
+        <div class="card-meta article-row-meta">
+          <span class="tag">{article.data.date.toLocaleDateString("zh-CN")}</span>
+          {article.data.tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
