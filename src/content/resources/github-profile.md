@@ -1,6 +1,6 @@
 ---
 title: "GitHub Profile"
-description: "替换为你的 GitHub 主页，用来集中展示公开仓库。"
+description: "sysuwilliam 的 GitHub 主页，集中展示公开仓库和近期工程记录。"
 date: 2026-06-28
 tags: ["github"]
 draft: false
