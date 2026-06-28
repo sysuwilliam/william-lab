@@ -1,0 +1,35 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  date?: Date;
+  tags?: string[];
+}
+
+const { title, description, date, tags = [] } = Astro.props;
+const formattedDate = date?.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
+---
+
+<BaseLayout title={title} description={description}>
+  <article>
+    <header class="article-header">
+      {formattedDate && <p class="article-date">{formattedDate}</p>}
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+      {tags.length > 0 && (
+        <div class="tag-row">
+          {tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

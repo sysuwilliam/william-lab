@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+const resources = (await getCollection("resources", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
+const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
+---
+
+<BaseLayout title="资源" description="Files, links, notes, and repositories.">
+  <header class="page-title">
+    <p class="eyebrow">/resources</p>
+    <h1>资源</h1>
+    <p class="lead">统一管理公开资料入口。仓库只保留小文件和索引，大文件放到外部存储。</p>
+  </header>
+
+  <div class="list-grid">
+    {resources.map((resource) => (
+      <a class="card resource-row" href={resourceUrl(resource.data.url)}>
+        <div>
+          <span class="resource-kind">{resource.data.kind}</span>
+          <h3>{resource.data.title}</h3>
+          <p>{resource.data.description}</p>
+          <div class="card-meta">
+            {resource.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+        </div>
+        <span class="tag">{resource.data.size ?? "external"}</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

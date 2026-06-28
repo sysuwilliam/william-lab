@@ -1,0 +1,34 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import TerminalPanel from "@components/TerminalPanel.astro";
+---
+
+<BaseLayout title="关于" description="About this personal website.">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">/about</p>
+      <h1>关于这个站点</h1>
+      <p class="lead">
+        这是一个可部署到 GitHub Pages 的个人网站第一版。它适合放学习笔记、项目记录、
+        GitHub 仓库索引和公开资源链接。把这里的占位内容替换成你的真实信息后即可发布。
+      </p>
+    </div>
+    <TerminalPanel title="about.session" />
+  </section>
+
+  <section class="section prose">
+    <h2>待替换信息</h2>
+    <ul>
+      <li>昵称或英文 ID</li>
+      <li>GitHub 用户名和仓库列表</li>
+      <li>邮箱或其他联系方式</li>
+      <li>真实项目介绍、文章和资源链接</li>
+    </ul>
+
+    <h2>站点原则</h2>
+    <p>
+      保持内容优先、结构清楚、页面轻量。极客感来自真实的工程记录、可读的排版和准确的链接，
+      而不是过度装饰。
+    </p>
+  </section>
+</BaseLayout>

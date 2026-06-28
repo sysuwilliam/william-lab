@@ -1,0 +1,40 @@
+---
+const navItems = [
+  { href: "/", label: "home" },
+  { href: "/articles/", label: "articles" },
+  { href: "/projects/", label: "projects" },
+  { href: "/resources/", label: "resources" },
+  { href: "/about/", label: "about" }
+];
+
+const currentPath = Astro.url.pathname;
+const withBase = (href: string) => {
+  const base = import.meta.env.BASE_URL;
+  const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+  return href === "/" ? normalizedBase : `${normalizedBase}${href.replace(/^\//, "")}`;
+};
+
+const isActive = (href: string) => {
+  const base = import.meta.env.BASE_URL;
+  const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+  const target = withBase(href);
+  if (href === "/") return currentPath === normalizedBase;
+  return currentPath.startsWith(target);
+};
+---
+
+<header class="site-header">
+  <div class="site-shell nav">
+    <a class="brand" href={withBase("/")}>
+      <span class="brand-mark">$_</span>
+      <span>william.lab</span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      {navItems.map((item) => (
+        <a href={withBase(item.href)} aria-current={isActive(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
