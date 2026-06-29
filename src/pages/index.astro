@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import TerminalPanel from "@components/TerminalPanel.astro";
+import VisitCounter from "@components/VisitCounter.astro";
 import { siteConfig } from "../site.config";
 
 const allArticles = await getCollection("articles", ({ data }) => !data.draft);
@@ -71,6 +72,9 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
         <a class="button primary" href={withBase("articles/")}>read articles</a>
         <a class="button" href={withBase("projects/")}>view projects</a>
         <a class="button" href="https://github.com/sysuwilliam">github</a>
+      </div>
+      <div class="hero-metrics reveal" style="--delay: 250ms">
+        <VisitCounter />
       </div>
     </div>
     <div class="hero-terminal reveal" style="--delay: 280ms">

@@ -280,6 +280,67 @@ h3 {
   margin-top: 1.5rem;
 }
 
+.hero-metrics {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+
+.visit-counter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border: 1px solid rgba(34, 48, 58, 0.92);
+  border-radius: 999px;
+  padding: 0.34rem 0.62rem;
+  color: var(--muted);
+  background: rgba(16, 22, 29, 0.58);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.visit-counter-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.42rem;
+  color: var(--accent-2);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.visit-counter-value {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.visit-counter-label {
+  margin-left: 0.36rem;
+  color: var(--soft);
+}
+
+.visit-counter.is-pending .visit-counter-icon,
+.visit-counter[data-counter-loaded="false"] .visit-counter-icon {
+  color: var(--warn);
+}
+
+.visit-counter.is-pending .visit-counter-label,
+.visit-counter[data-counter-loaded="false"] .visit-counter-label {
+  display: none;
+}
+
+.visit-counter[data-counter-loaded="true"] {
+  border-color: rgba(87, 199, 255, 0.28);
+  background: rgba(87, 199, 255, 0.055);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -1076,6 +1137,11 @@ h3 {
 
   h1 {
     font-size: 2rem;
+  }
+
+  .visit-counter {
+    width: 100%;
+    justify-content: center;
   }
 
   .card,

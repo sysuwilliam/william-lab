@@ -1,0 +1,22 @@
+---
+import { siteConfig } from "../site.config";
+
+const enabled = siteConfig.goatCounterCode.trim().length > 0;
+const counterPath = siteConfig.goatCounterPath;
+---
+
+<div
+  class:list={["visit-counter", !enabled && "is-pending"]}
+  data-visit-counter
+  data-counter-enabled={enabled ? "true" : "false"}
+  data-counter-code={enabled ? siteConfig.goatCounterCode : ""}
+  data-counter-path={counterPath}
+  aria-label="Site visits"
+>
+  <svg class="visit-counter-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M2.1 12s3.3-6 9.9-6 9.9 6 9.9 6-3.3 6-9.9 6-9.9-6-9.9-6Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+  <span class="visit-counter-value" data-visit-counter-value>{enabled ? "loading" : "stats pending"}</span>
+  {enabled && <span class="visit-counter-label">views</span>}
+</div>

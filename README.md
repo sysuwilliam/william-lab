@@ -19,6 +19,14 @@ npm run build
 
 The generated static site is written to `dist/`.
 
+## Visit Counter
+
+The homepage visit badge uses GoatCounter when `siteConfig.goatCounterCode` is set in `src/site.config.ts`.
+
+- Keep `goatCounterCode` empty to show the local fallback `stats pending`.
+- Set `goatCounterCode` to your GoatCounter site code to load the total count.
+- In GoatCounter settings, enable visitor counts on your website.
+
 ## GitHub Pages
 
 This repository includes `.github/workflows/deploy.yml`.

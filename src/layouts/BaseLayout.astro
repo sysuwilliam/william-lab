@@ -161,6 +161,31 @@ const goatCounterUrl = hasGoatCounter ? `https://${siteConfig.goatCounterCode}.g
             });
           });
         }
+
+        document.querySelectorAll("[data-visit-counter]").forEach((counter) => {
+          const enabled = counter.getAttribute("data-counter-enabled") === "true";
+          const code = counter.getAttribute("data-counter-code") || "";
+          const path = counter.getAttribute("data-counter-path") || "TOTAL";
+          const value = counter.querySelector("[data-visit-counter-value]");
+
+          if (!value || !enabled || !code) return;
+
+          const endpoint = `https://${code}.goatcounter.com/counter/${encodeURIComponent(path)}.json`;
+
+          fetch(endpoint, { cache: "no-store" })
+            .then((response) => {
+              if (!response.ok) throw new Error(`counter ${response.status}`);
+              return response.json();
+            })
+            .then((data) => {
+              value.textContent = data.count || "0";
+              counter.setAttribute("data-counter-loaded", "true");
+            })
+            .catch(() => {
+              value.textContent = "stats pending";
+              counter.setAttribute("data-counter-loaded", "false");
+            });
+        });
       })();
     </script>
   </body>
