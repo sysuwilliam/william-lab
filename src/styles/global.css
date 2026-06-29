@@ -1048,13 +1048,20 @@ h3 {
   }
 
   .nav {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 0.9rem 0;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: auto;
+    padding: 0.7rem 0;
   }
 
   .nav-links {
-    justify-content: flex-start;
+    gap: 0.18rem;
+    justify-content: flex-end;
+  }
+
+  .nav-links a {
+    padding: 0.28rem 0.42rem;
+    font-size: 0.78rem;
   }
 
   .hero,
