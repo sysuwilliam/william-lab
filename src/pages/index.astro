@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import TerminalPanel from "@components/TerminalPanel.astro";
-import StatsPanel from "@components/StatsPanel.astro";
 import { siteConfig } from "../site.config";
 
 const allArticles = await getCollection("articles", ({ data }) => !data.draft);
@@ -28,20 +27,6 @@ const resources = [...allResources]
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const seriesCount = new Set(allArticles.map((article) => article.data.series).filter(Boolean)).size;
-const publicProjectCount = allProjects.filter((project) => !project.data.team && !isPrivateProject(project)).length;
-const privateProjectCount = allProjects.filter(isPrivateProject).length;
-const teamProjectCount = allProjects.filter((project) => project.data.team).length;
-const stats = [
-  { label: "articles", value: allArticles.length, tone: "accent" },
-  { label: "series", value: seriesCount, tone: "blue" },
-  { label: "public.repos", value: publicProjectCount },
-  { label: "private.notes", value: privateProjectCount },
-  { label: "team", value: teamProjectCount },
-  { label: "views", value: siteConfig.goatCounterCode ? "loading" : "stats pending", tone: "muted" },
-  { label: "latest.commit", value: siteConfig.latestCommit, tone: "blue" }
-];
-
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
 const urlFor = (section: string, id: string) => withBase(`${section}/${id}/`);
@@ -52,7 +37,7 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
   <section class="hero">
     <div>
       <p class="eyebrow reveal" style="--delay: 0ms">~/public-notes</p>
-      <h1 class="reveal" style="--delay: 70ms"><span>William</span><span>Lab</span></h1>
+      <h1 class="reveal" style="--delay: 70ms">William Lab</h1>
       <p class="lead reveal" style="--delay: 140ms">
         这里整理开发板实验、嵌入式链路、视觉部署和公开 GitHub 项目。
         内容以工程报告为主，尽量保留环境、命令、踩坑和验证结论。
@@ -66,16 +51,6 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
     <div class="hero-terminal reveal" style="--delay: 280ms">
       <TerminalPanel title="profile.session" />
     </div>
-  </section>
-
-  <section class="section compact-section">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">site status</p>
-        <h2>站点状态</h2>
-      </div>
-    </div>
-    <StatsPanel items={stats} />
   </section>
 
   <section class="section">
