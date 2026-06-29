@@ -736,6 +736,16 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.prose h1 {
+  max-width: none;
+  margin-top: 2.4rem;
+  margin-bottom: 0.8rem;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  line-height: 1.18;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
 .article-shell {
   display: grid;
   grid-template-columns: minmax(0, 780px);
