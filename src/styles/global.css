@@ -767,9 +767,14 @@ h3 {
   position: sticky;
   top: 84px;
   min-width: 0;
+  max-height: calc(100vh - 104px);
 }
 
 .toc-card {
+  max-height: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 0.9rem;
@@ -1002,6 +1007,13 @@ h3 {
   .article-aside {
     position: static;
     order: -1;
+    max-height: none;
+  }
+
+  .toc-card {
+    max-height: none;
+    overflow-y: visible;
+    scrollbar-gutter: auto;
   }
 
   .article-row-meta {
