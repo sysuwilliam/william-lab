@@ -426,6 +426,7 @@ h3 {
 
 .terminal-body {
   position: relative;
+  overflow: hidden;
   margin: 0;
   padding: 1rem;
   color: #c5d2dc;
@@ -433,6 +434,7 @@ h3 {
   font-size: 0.88rem;
   line-height: 1.7;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .prompt {
