@@ -774,11 +774,15 @@ h3 {
   max-height: inherit;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
+  scrollbar-width: none;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 0.9rem;
   background: rgba(16, 22, 29, 0.58);
+}
+
+.toc-card::-webkit-scrollbar {
+  display: none;
 }
 
 .toc-card .eyebrow {
@@ -1013,7 +1017,6 @@ h3 {
   .toc-card {
     max-height: none;
     overflow-y: visible;
-    scrollbar-gutter: auto;
   }
 
   .article-row-meta {
