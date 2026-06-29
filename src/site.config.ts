@@ -6,7 +6,7 @@ export const siteConfig = {
   base: "/william-lab/",
   repository: "https://github.com/sysuwilliam/william-lab",
   githubUser: "sysuwilliam",
-  goatCounterCode: "",
+  goatCounterCode: "william-lab",
   goatCounterPath: "TOTAL",
   latestCommit: "main"
 };

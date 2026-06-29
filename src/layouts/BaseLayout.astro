@@ -181,8 +181,8 @@ const goatCounterUrl = hasGoatCounter ? `https://${siteConfig.goatCounterCode}.g
               value.textContent = data.count || "0";
               counter.setAttribute("data-counter-loaded", "true");
             })
-            .catch(() => {
-              value.textContent = "stats pending";
+            .catch((error) => {
+              value.textContent = String(error).includes("403") ? "stats private" : "stats pending";
               counter.setAttribute("data-counter-loaded", "false");
             });
         });
