@@ -1,0 +1,55 @@
+---
+import VisitCounter from "@components/VisitCounter.astro";
+import { siteConfig } from "../site.config";
+
+interface Props {
+  articleId: string;
+  articlePath: string;
+  interactive?: boolean;
+}
+
+const { articleId, articlePath, interactive = false } = Astro.props;
+const enabled = siteConfig.goatCounterCode.trim().length > 0;
+const likePath = `like:${articleId}`;
+---
+
+<div class:list={["article-engagement", interactive && "interactive"]}>
+  <VisitCounter path={articlePath} compact />
+  {interactive ? (
+    <button
+      type="button"
+      class="like-counter"
+      data-like-counter
+      data-counter-enabled={enabled ? "true" : "false"}
+      data-counter-code={enabled ? siteConfig.goatCounterCode : ""}
+      data-like-path={likePath}
+      data-like-interactive="true"
+      aria-label="Like this article"
+      disabled={!enabled}
+    >
+      <svg class="like-counter-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 22V10H3v12h4Z" />
+        <path d="M7 10l4.2-7.2c.5-.9 1.8-.7 2.1.3.3 1.1.1 2.7-.5 4.9H19c1.3 0 2.3 1.2 2 2.5l-1.7 8.1c-.3 1.4-1.5 2.4-2.9 2.4H7V10Z" />
+      </svg>
+      <span class="like-counter-value" data-like-counter-value>{enabled ? "loading" : "pending"}</span>
+      <span class="like-counter-label">likes</span>
+    </button>
+  ) : (
+    <span
+      class="like-counter"
+      data-like-counter
+      data-counter-enabled={enabled ? "true" : "false"}
+      data-counter-code={enabled ? siteConfig.goatCounterCode : ""}
+      data-like-path={likePath}
+      data-like-interactive="false"
+      aria-label="Article likes"
+    >
+      <svg class="like-counter-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 22V10H3v12h4Z" />
+        <path d="M7 10l4.2-7.2c.5-.9 1.8-.7 2.1.3.3 1.1.1 2.7-.5 4.9H19c1.3 0 2.3 1.2 2 2.5l-1.7 8.1c-.3 1.4-1.5 2.4-2.9 2.4H7V10Z" />
+      </svg>
+      <span class="like-counter-value" data-like-counter-value>{enabled ? "loading" : "pending"}</span>
+      <span class="like-counter-label">likes</span>
+    </span>
+  )}
+</div>

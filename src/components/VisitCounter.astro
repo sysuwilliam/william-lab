@@ -2,15 +2,19 @@
 import { siteConfig } from "../site.config";
 
 const enabled = siteConfig.goatCounterCode.trim().length > 0;
-const counterPath = siteConfig.goatCounterPath;
+const {
+  path = siteConfig.goatCounterPath,
+  label = "views",
+  compact = false
+} = Astro.props;
 ---
 
 <div
-  class:list={["visit-counter", !enabled && "is-pending"]}
+  class:list={["visit-counter", compact && "compact", !enabled && "is-pending"]}
   data-visit-counter
   data-counter-enabled={enabled ? "true" : "false"}
   data-counter-code={enabled ? siteConfig.goatCounterCode : ""}
-  data-counter-path={counterPath}
+  data-counter-path={path}
   aria-label="Site visits"
 >
   <svg class="visit-counter-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -18,5 +22,5 @@ const counterPath = siteConfig.goatCounterPath;
     <circle cx="12" cy="12" r="3" />
   </svg>
   <span class="visit-counter-value" data-visit-counter-value>{enabled ? "loading" : "stats pending"}</span>
-  {enabled && <span class="visit-counter-label">views</span>}
+  {enabled && <span class="visit-counter-label">{label}</span>}
 </div>

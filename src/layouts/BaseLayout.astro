@@ -162,6 +162,24 @@ const goatCounterUrl = hasGoatCounter ? `https://${siteConfig.goatCounterCode}.g
           });
         }
 
+        const formatCount = (count) => {
+          const numeric = Number(String(count ?? "0").replace(/[^\d]/g, ""));
+          if (!Number.isFinite(numeric)) return String(count ?? "0");
+          if (numeric >= 1000000) return `${(numeric / 1000000).toFixed(1).replace(/\.0$/, "")}m`;
+          if (numeric >= 1000) return `${(numeric / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+          return String(numeric);
+        };
+
+        const fetchCounter = (code, path) => {
+          const endpoint = `https://${code}.goatcounter.com/counter/${encodeURIComponent(path)}.json`;
+          return fetch(endpoint, { cache: "no-store" })
+            .then((response) => {
+              if (!response.ok) throw new Error(`counter ${response.status}`);
+              return response.json();
+            })
+            .then((data) => data.count || "0");
+        };
+
         document.querySelectorAll("[data-visit-counter]").forEach((counter) => {
           const enabled = counter.getAttribute("data-counter-enabled") === "true";
           const code = counter.getAttribute("data-counter-code") || "";
@@ -170,21 +188,74 @@ const goatCounterUrl = hasGoatCounter ? `https://${siteConfig.goatCounterCode}.g
 
           if (!value || !enabled || !code) return;
 
-          const endpoint = `https://${code}.goatcounter.com/counter/${encodeURIComponent(path)}.json`;
-
-          fetch(endpoint, { cache: "no-store" })
-            .then((response) => {
-              if (!response.ok) throw new Error(`counter ${response.status}`);
-              return response.json();
-            })
-            .then((data) => {
-              value.textContent = data.count || "0";
+          fetchCounter(code, path)
+            .then((count) => {
+              value.textContent = formatCount(count);
               counter.setAttribute("data-counter-loaded", "true");
             })
             .catch((error) => {
               value.textContent = String(error).includes("403") ? "stats private" : "stats pending";
               counter.setAttribute("data-counter-loaded", "false");
             });
+        });
+
+        const sendGoatEvent = (payload, retries = 20) => {
+          if (window.goatcounter?.count) {
+            window.goatcounter.count(payload);
+            return;
+          }
+
+          if (retries <= 0) return;
+          window.setTimeout(() => sendGoatEvent(payload, retries - 1), 150);
+        };
+
+        document.querySelectorAll("[data-like-counter]").forEach((counter) => {
+          const enabled = counter.getAttribute("data-counter-enabled") === "true";
+          const interactive = counter.getAttribute("data-like-interactive") === "true";
+          const code = counter.getAttribute("data-counter-code") || "";
+          const path = counter.getAttribute("data-like-path") || "";
+          const value = counter.querySelector("[data-like-counter-value]");
+          const storageKey = `william-lab-liked:${path}`;
+
+          if (!value || !enabled || !code || !path) return;
+
+          const setLiked = () => {
+            counter.setAttribute("data-liked", "true");
+            if (interactive) counter.setAttribute("aria-label", "Liked");
+          };
+
+          if (window.localStorage.getItem(storageKey) === "true") setLiked();
+
+          fetchCounter(code, path)
+            .then((count) => {
+              value.textContent = formatCount(count);
+              counter.setAttribute("data-counter-loaded", "true");
+            })
+            .catch(() => {
+              value.textContent = "pending";
+              counter.setAttribute("data-counter-loaded", "false");
+            });
+
+          if (!interactive) return;
+
+          counter.removeAttribute("disabled");
+          counter.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (counter.getAttribute("data-liked") === "true") return;
+
+            const current = Number((value.textContent || "0").replace(/[^\d]/g, "")) || 0;
+            value.textContent = formatCount(current + 1);
+            setLiked();
+            window.localStorage.setItem(storageKey, "true");
+
+            sendGoatEvent({
+              path,
+              title: `Like ${document.title}`,
+              event: true
+            });
+          });
         });
       })();
     </script>

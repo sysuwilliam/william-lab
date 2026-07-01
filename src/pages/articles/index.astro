@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import ArticleEngagement from "@components/ArticleEngagement.astro";
 
 const articles = (await getCollection("articles", ({ data }) => !data.draft))
   .sort((a, b) => {
@@ -93,6 +94,7 @@ const latestArticles = [...articles]
           <div class="card-meta article-row-meta">
             <span class="tag">{article.data.date.toLocaleDateString("zh-CN")}</span>
             {article.data.tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
+            <ArticleEngagement articleId={article.id} articlePath={withBase(`articles/${article.id}/`)} />
           </div>
         </a>
       ))}
