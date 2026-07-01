@@ -310,13 +310,13 @@ target_sources(app PRIVATE src/main.c)
 
 构建成功截图如下：
 
-![Zephyr LED build success](https://raw.githubusercontent.com/sysuwilliam/RA4M2-SENSOR/main/e3f0a06c-5beb-4947-9e8c-33d98db01e41.png)
+![Zephyr LED build success](/media/articles/ra4m2-sensor/04-zephyr-rtos-ra4m2-sensor/e3f0a06c-5beb-4947-9e8c-33d98db01e41-9334247aaa33.png)
 
 从截图可以看出，`west build` 已经完成了完整的配置、编译和链接流程，最终生成了 `zephyr.elf`。同时，构建输出中显示板卡为 `ek_ra4m2/r7fa4m2ad3cfp`，说明 Zephyr 已正确识别目标硬件；内存占用信息也表明程序规模很小，符合 LED 闪烁这类基础验证工程的预期。
 
 烧录成功截图如下：
 
-![Zephyr LED flash success](https://raw.githubusercontent.com/sysuwilliam/RA4M2-SENSOR/main/1c3adcca-890b-4a9c-873d-5bbb3680e12d.png)
+![Zephyr LED flash success](/media/articles/ra4m2-sensor/04-zephyr-rtos-ra4m2-sensor/1c3adcca-890b-4a9c-873d-5bbb3680e12d-fb9f695107cc.png)
 
 从截图可以看出，`west flash` 已调用 `pyocd` 作为 runner，并成功完成 `Loading`、`Erasing`、`Programming` 等步骤，最终写入 `zephyr.hex` 到目标板。这说明板卡连接、DAPLink 识别以及 Renesas RA4M2 器件支持包都已配置正确。
 

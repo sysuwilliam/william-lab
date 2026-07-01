@@ -49,7 +49,7 @@ UNO Q 进入 SBC 模式
 
 在开始做开发环境配置之前，首先要确保 UNO Q 能够作为单板计算机稳定进入 Debian 图形桌面。开发板通过 USB-C 拓展坞连接显示器、键盘和鼠标后，上电即可看到启动画面：
 
-![UNO Q SBC 模式启动画面](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/01_sbc_mode_boot_screen.png)
+![UNO Q SBC 模式启动画面](/media/articles/arduino-uno-q-4gb/04-sbc/01_sbc_mode_boot_screen-14ee3d7bebdc.png)
 
 这一画面说明开发板的视频输出链路是正常的，SBC 模式可以独立启动。从使用角度来说，这一步验证了后续环境配置所依赖的几个前提：
 
@@ -72,7 +72,7 @@ UNO Q 进入 SBC 模式
 sudo apt install fastfetch
 ```
 
-![安装 fastfetch](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/02_install_fastfetch.png)
+![安装 fastfetch](/media/articles/arduino-uno-q-4gb/04-sbc/02_install_fastfetch-a585da742314.png)
 
 安装完成后，运行：
 
@@ -82,7 +82,7 @@ fastfetch
 
 即可快速看到当前系统环境，包括 Debian 版本、内核、桌面环境、内存占用、磁盘空间、CPU 和 GPU 等信息：
 
-![fastfetch 显示系统信息](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/03_fastfetch_system_info.png)
+![fastfetch 显示系统信息](/media/articles/arduino-uno-q-4gb/04-sbc/03_fastfetch_system_info-c063a567aba8.png)
 
 从截图里可以确认几个比较关键的点：
 
@@ -103,7 +103,7 @@ fastfetch
 
 这一部分的操作我一边参考命令说明，一边在终端中执行：
 
-![迁移 apt 缓存和 Docker 数据](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/04_move_apt_cache_and_docker_data.png)
+![迁移 apt 缓存和 Docker 数据](/media/articles/arduino-uno-q-4gb/04-sbc/04_move_apt_cache_and_docker_data-4910ea7ec83a.png)
 
 核心思路是：
 
@@ -115,7 +115,7 @@ fastfetch
 
 完成迁移后，再用 `df -h`、`ls -lh` 和 `sudo apt update` 进行验证：
 
-![验证存储优化结果](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/05_verify_storage_optimization.png)
+![验证存储优化结果](/media/articles/arduino-uno-q-4gb/04-sbc/05_verify_storage_optimization-d052d6cccc4c.png)
 
 从结果来看，优化后有几个比较直观的变化：
 
@@ -132,7 +132,7 @@ fastfetch
 
 在继续整理板端文档和配置说明时，我注意到一个体验问题：某些终端或当前字体配置下，中文内容会出现方块字或乱码显示，阅读 Markdown 文档时尤其明显。
 
-![终端中的中文显示问题](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/06_terminal_chinese_rendering_issue.png)
+![终端中的中文显示问题](/media/articles/arduino-uno-q-4gb/04-sbc/06_terminal_chinese_rendering_issue-e663a3c1216b.png)
 
 这个现象本身不会阻止命令执行，但会明显影响开发体验，尤其在以下场景下会比较麻烦：
 
@@ -160,13 +160,13 @@ sudo systemctl status xrdp
 
 安装并启动后的状态如下：
 
-![安装并启用 xrdp](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/07_install_and_enable_xrdp.png)
+![安装并启用 xrdp](/media/articles/arduino-uno-q-4gb/04-sbc/07_install_and_enable_xrdp-0d9b1e2e1e46.png)
 
 从截图可以看到，`xrdp.service` 已经进入 `active (running)` 状态，这说明远程桌面服务本身已经成功起来了。
 
 不过，仅仅把服务启动起来还不够。为了让远程登录后的桌面会话更稳定，我进一步修改了 `/etc/xrdp/startwm.sh`，并重启服务、检查端口监听状态，同时通过 `hostname -I` 查看开发板当前 IP 地址：
 
-![配置 xrdp 会话并获取开发板 IP](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/08_configure_xrdp_session_and_get_ip.png)
+![配置 xrdp 会话并获取开发板 IP](/media/articles/arduino-uno-q-4gb/04-sbc/08_configure_xrdp_session_and_get_ip-b7445262206f.png)
 
 从这里可以完成几项确认：
 
@@ -178,11 +178,11 @@ sudo systemctl status xrdp
 
 在 Windows 侧发起远程桌面连接后，会先看到 `xrdp` 的登录界面。这里保持 `Session` 为 `Xorg`，然后输入 UNO Q 上的用户名和密码即可：
 
-![xrdp 登录界面](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/09_xrdp_login_screen.png)
+![xrdp 登录界面](/media/articles/arduino-uno-q-4gb/04-sbc/09_xrdp_login_screen-6ce1386c9ac2.png)
 
 登录成功后，就可以直接在 Windows 桌面中看到 UNO Q 的 Debian 图形界面，并继续打开终端、App Lab 等工具进行操作：
 
-![xrdp 远程桌面连接效果](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/10_xrdp_remote_desktop_effect.png)
+![xrdp 远程桌面连接效果](/media/articles/arduino-uno-q-4gb/04-sbc/10_xrdp_remote_desktop_effect-7dbfeaac3be1.png)
 
 从实际体验来看，这一步非常关键。因为它意味着后续很多工作都不再需要围着开发板本体展开，而是可以像管理一台远程 Linux 工作站一样，在主机上完成图形界面的开发、调试和资料整理。
 
@@ -192,7 +192,7 @@ sudo systemctl status xrdp
 
 环境配置完成后，我又通过 `scp` 把开发板中的截图回传到 Ubuntu 主机桌面，方便后续整理成报告：
 
-![通过 scp 回传报告截图](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/4/11_copy_report_images_from_board.png)
+![通过 scp 回传报告截图](/media/articles/arduino-uno-q-4gb/04-sbc/11_copy_report_images_from_board-bf6da43b5de7.png)
 
 这个步骤虽然不是开发环境配置本身的一部分，但它很好地说明了前面网络配置和板端文件操作已经形成闭环。也就是说，此时 UNO Q 不只是能本地运行 Debian，还能比较自然地融入到电脑端的开发与资料整理流程中。
 

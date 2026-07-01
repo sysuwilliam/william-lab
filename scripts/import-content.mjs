@@ -355,4 +355,5 @@ await importArduino();
 await importFrdm();
 await importRa4m2();
 await writeProjects();
+await import("./sync-project-readmes.mjs");
 console.log("Imported board articles and GitHub projects.");

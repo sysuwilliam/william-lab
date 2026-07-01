@@ -199,7 +199,7 @@ v4l2-ctl --device=/dev/video0 --list-formats-ext
 
 检查结果如下图所示：
 
-![检查摄像头设备与格式](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/01_%E6%A3%80%E6%9F%A5%E6%91%84%E5%83%8F%E5%A4%B4%E8%AE%BE%E5%A4%87%E4%B8%8E%E6%A0%BC%E5%BC%8F.png)
+![检查摄像头设备与格式](/media/articles/arduino-uno-q-4gb/05-debian-opencv/01_-22c02ddaed7f.png)
 
 从图中可以看到：
 
@@ -225,7 +225,7 @@ ls -l
 
 部署结果如下：
 
-![部署 debian-opencv 项目](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/02_%E9%83%A8%E7%BD%B2debian_opencv%E9%A1%B9%E7%9B%AE.png)
+![部署 debian-opencv 项目](/media/articles/arduino-uno-q-4gb/05-debian-opencv/02_-debian_opencv-68ec8589e276.png)
 
 从这里可以确认两件事：
 
@@ -247,7 +247,7 @@ chmod +x run_host.sh
 
 启动界面如下：
 
-![启动 OpenCV 服务](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/03_%E5%90%AF%E5%8A%A8opencv%E6%9C%8D%E5%8A%A1.png)
+![启动 OpenCV 服务](/media/articles/arduino-uno-q-4gb/05-debian-opencv/03_-opencv-347b9074b135.png)
 
 程序启动后终端打印了两条非常关键的信息：
 
@@ -275,7 +275,7 @@ http://10.233.80.145:8080
 
 打开后的界面如下：
 
-![浏览器访问 OpenCV 预览页](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/04_%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AEOpenCV%E9%A2%84%E8%A7%88%E9%A1%B5.png)
+![浏览器访问 OpenCV 预览页](/media/articles/arduino-uno-q-4gb/05-debian-opencv/04_-OpenCV-f06d0c9cdd58.png)
 
 这个页面虽然很简洁，但已经包含了完整的调试入口：
 
@@ -306,7 +306,7 @@ http://10.233.80.145:8080
 
 处理完成后的预览效果如下：
 
-![浏览器访问 OpenCV 预览页](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/04_%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AEOpenCV%E9%A2%84%E8%A7%88%E9%A1%B5.png)
+![浏览器访问 OpenCV 预览页](/media/articles/arduino-uno-q-4gb/05-debian-opencv/04_-OpenCV-f06d0c9cdd58.png)
 
 图中可以看到，程序已经在实时视频上叠加了：
 
@@ -331,7 +331,7 @@ http://10.233.80.145:8080
 
 日志如下图所示：
 
-![服务日志验证 HTTP 请求](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/05_%E6%9C%8D%E5%8A%A1%E6%97%A5%E5%BF%97%E9%AA%8C%E8%AF%81HTTP%E8%AF%B7%E6%B1%82.png)
+![服务日志验证 HTTP 请求](/media/articles/arduino-uno-q-4gb/05-debian-opencv/05_-HTTP-6a00f68e274a.png)
 
 从日志可以看到浏览器发起了多种请求：
 
@@ -380,7 +380,7 @@ streaming, brightness=153.3
 
 除了实时流之外，我还测试了 `snapshot.jpg` 接口。点击页面中的 Snapshot 链接后，浏览器会直接打开最新一帧 JPEG 图像：
 
-![获取 snapshot 静态快照](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/5/07_%E8%8E%B7%E5%8F%96snapshot%E9%9D%99%E6%80%81%E5%BF%AB%E7%85%A7.png)
+![获取 snapshot 静态快照](/media/articles/arduino-uno-q-4gb/05-debian-opencv/07_-snapshot-c5eaeaa57232.png)
 
 这个接口的价值在于：
 

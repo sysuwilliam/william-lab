@@ -73,7 +73,7 @@ tar -xf ArduinoAppLab*.tar.gz
 
 我先下载了App Lab压缩包，然后在文件管理器中完成解压：
 
-![App Lab 解压](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E8%A7%A3%E5%8E%8B.png)
+![App Lab 解压](/media/articles/arduino-uno-q-4gb/02-ubuntu/applab-1f139db63bdc.png)
 
 解压后可以把目录移动到桌面或应用目录中，方便后续启动：
 
@@ -96,7 +96,7 @@ sudo apt update
 sudo apt install libwebkit2gtk-4.1-0
 ```
 
-![安装 libwebkit](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/libwebkit.png)
+![安装 libwebkit](/media/articles/arduino-uno-q-4gb/02-ubuntu/libwebkit-4abf61c4bf5f.png)
 
 
 这个依赖主要用于 App Lab 的桌面界面渲染。如果没有安装，App Lab 可能会无法启动，或者启动后界面异常。
@@ -114,7 +114,7 @@ cd ~/Desktop/ArduinoAppLab*
 
 App Lab 启动后，如果此时还没有连接 UNO Q，界面会显示当前没有可用开发板：
 
-![App Lab 未连接开发板](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E6%9C%AA%E8%BF%9E%E6%8E%A5.png)
+![App Lab 未连接开发板](/media/articles/arduino-uno-q-4gb/02-ubuntu/applab-ef3743e5758e.png)
 
 这个状态是正常的。下一步需要先配置 Ubuntu 的 USB 权限，否则即使用 USB-C 连接了开发板，App Lab 也可能无法正常识别。
 
@@ -139,7 +139,7 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0078", MODE="0660
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="05c6", ATTRS{idProduct}=="9008", MODE="0660", TAG+="uaccess"
 ```
 
-![官方 udev 规则说明](https://docs.arduino.cc/static/31b990a2b0b3ec1d1bf67e0dfae97d44/a6d36/udev_rules_2.png)
+![官方 udev 规则说明](/media/articles/arduino-uno-q-4gb/02-ubuntu/udev_rules_2-e4e3f73bb0cb.png)
 
 ### 2. 使用官方脚本自动配置
 
@@ -162,7 +162,7 @@ sudo ./post_install.sh
 
 脚本执行后会把需要的 udev 规则导入系统：
 
-![导入 udev rules](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/%E5%AF%BC%E5%85%A5rules.png)
+![导入 udev rules](/media/articles/arduino-uno-q-4gb/02-ubuntu/rules-ce678eebae86.png)
 
 做完上述操作后注意重启系统，使规则成功导入。
 
@@ -176,7 +176,7 @@ cat /etc/udev/rules.d/60-arduino-zephyr.rules
 
 验证结果如下：
 
-![查看 udev rules](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/%E6%9F%A5%E7%9C%8Brules.png)
+![查看 udev rules](/media/articles/arduino-uno-q-4gb/02-ubuntu/rules-9946f2de2bf7.png)
 
 配置完成后需要重新加载规则：
 
@@ -195,7 +195,7 @@ udev 权限配置完成后，使用 USB-C 数据线连接 UNO Q 和 Ubuntu 主�
 
 连接新开发板后，App Lab 识别到了待配置的 UNO Q：
 
-![App Lab 连接新开发板](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E8%BF%9E%E6%8E%A5%E6%96%B0%E6%9D%BF%E5%AD%90.png)
+![App Lab 连接新开发板](/media/articles/arduino-uno-q-4gb/02-ubuntu/applab-bf6382c7589c.png)
 
 ---
 
@@ -213,7 +213,7 @@ udev 权限配置完成后，使用 USB-C 数据线连接 UNO Q 和 Ubuntu 主�
 
 App Lab 会进入开发板配置页面，要求完成基础设置：
 
-![Board configuration](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/board%20configuration.png)
+![Board configuration](/media/articles/arduino-uno-q-4gb/02-ubuntu/board-configuration-76626d1579b0.png)
 
 这个步骤很关键，因为后续 SSH 连接和网络模式都依赖这里设置的开发板名称和密码。
 
@@ -229,7 +229,7 @@ ssh arduino@<boardname>.local
 
 接着配置 Wi-Fi。UNO Q 的 Linux 系统和 App Lab 更新都需要网络，后续网络模式、SSH、Web UI 示例也依赖开发板连接到局域网。
 
-![Network setup](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/network%20setup.png)
+![Network setup](/media/articles/arduino-uno-q-4gb/02-ubuntu/network-setup-fb59aadf5e01.png)
 
 
 官方文档说明，首次设置完成后，开发板会记住 Wi-Fi。之后如果电脑和开发板在同一局域网中，就可以在 App Lab 中使用网络模式连接。如果更换了 Wi-Fi，通常需要再次通过 USB 连接开发板来配置新网络。
@@ -242,13 +242,13 @@ UNO Q 出厂系统通常会在首次连接时检查更新。Arduino 官方说明
 
 软件更新页面：
 
-![Software update](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/software%20update.png)
+![Software update](/media/articles/arduino-uno-q-4gb/02-ubuntu/software-update-cb71d8072547.png)
 
 这个步骤需要耐心等待，不要中途拔掉电源或断开 USB。因为 UNO Q 本质上运行完整的 Linux 系统，更新过程中如果强制断电，可能会导致系统状态不完整。
 
 更新完成后，App Lab 会显示开发板处于可用状态：
 
-![开发板可用](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/available.png)
+![开发板可用](/media/articles/arduino-uno-q-4gb/02-ubuntu/available-5200aa2a7557.png)
 
 此时选择Available on your network，进一步根据指引完成SSH配置，以后就可以通过网络来连接开发板，而不需要USB连接了。
 
@@ -256,9 +256,9 @@ UNO Q 出厂系统通常会在首次连接时检查更新。Arduino 官方说明
 
 ## 十、进入Arduino App Lab
 完成上述初始化配置后，就可以成功进入软件开发界面了：
-![App Lab 二次认证](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/applab%E8%AE%A4%E8%AF%812.png)
+![App Lab 二次认证](/media/articles/arduino-uno-q-4gb/02-ubuntu/applab-2-fb4d0c3dc19d.png)
 
-![成功进入 App Lab](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures/%E6%88%90%E5%8A%9F%E8%BF%9B%E5%85%A5applab.png)
+![成功进入 App Lab](/media/articles/arduino-uno-q-4gb/02-ubuntu/applab-c51c29e1d3d2.png)
 
 ## 十一、跑例程
 连上开发板的第一件事肯定是跑例程，我录制了一个视频，演示了从开发板上电到运行部分例程和我写的程序的操作。视频中所运行到的程序有：

@@ -8,8 +8,13 @@ repo: "https://github.com/sysuwilliam/RA4M2-SENSOR"
 status: "active"
 stack: ["C", "Zephyr", "Renesas FSP", "Markdown"]
 ---
+
 整理 RA4M2-SENSOR 的开箱记录、开发环境、RA 工程调试注意事项和 Zephyr 双工程实践。这个仓库用于保存可公开的板卡资料、报告和示例工程。
 
 ## Links
 
 - [GitHub repository](https://github.com/sysuwilliam/RA4M2-SENSOR)
+
+## Repository README
+
+当前没有从公开 GitHub 仓库读取到 README。仓库公开 README 后，运行 `npm run sync:projects` 即可同步到这里。

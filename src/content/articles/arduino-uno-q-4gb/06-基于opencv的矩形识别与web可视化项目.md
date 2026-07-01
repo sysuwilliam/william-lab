@@ -120,13 +120,13 @@ USB 摄像头
 
 为了让矩形识别程序跑在开发板宿主 Debian 上，我先把整理好的应用包从主机传到开发板。
 
-![将矩形识别应用包传到开发板](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/6/01_copy_rectangle_app_to_board.png)
+![将矩形识别应用包传到开发板](/media/articles/arduino-uno-q-4gb/06-opencv-web/01_copy_rectangle_app_to_board-c5d9c8bbde41.png)
 
 从图中可以看到，我通过 `scp` 将 `debian-opencv-rectangle.zip` 复制到了开发板的 `/home/arduino/ArduinoApps/` 目录。这样做的好处是比较贴合当前整个项目的工作方式：代码可以在主机侧整理和修改，再按需同步到板端执行。
 
 随后，我在开发板远程桌面的终端中完成了解压、赋予运行权限和启动服务的过程：
 
-![启动宿主 Debian 上的矩形识别服务](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/6/02_start_host_rectangle_service.png)
+![启动宿主 Debian 上的矩形识别服务](/media/articles/arduino-uno-q-4gb/06-opencv-web/02_start_host_rectangle_service-f08b60b16506.png)
 
 对应命令流程如下：
 
@@ -153,7 +153,7 @@ camera opened
 
 最后，在浏览器中访问开发板 IP 对应的页面，就可以看到 OpenCV 处理后的结果：
 
-![浏览器中的矩形识别结果预览](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/pictures456/6/03_rectangle_detection_web_preview.png)
+![浏览器中的矩形识别结果预览](/media/articles/arduino-uno-q-4gb/06-opencv-web/03_rectangle_detection_web_preview-4db69774acc6.png)
 
 从这个页面可以直观看到几个结果：
 

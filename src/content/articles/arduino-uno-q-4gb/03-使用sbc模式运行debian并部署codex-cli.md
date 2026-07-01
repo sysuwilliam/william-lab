@@ -29,7 +29,7 @@ UNO Q SBC 模式启动
 
 从实际使用上看，这套连接方式的核心就是把 UNO Q 当成一台小型 Linux 主机来搭建：显示屏负责输出桌面界面，键盘和鼠标负责交互，摄像头为后续视觉应用预留输入能力，拓展坞则负责把这些外设集中接入到板端。
 
-![UNO Q SBC 模式硬件连接](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/IMG_20260529_100904.jpg)
+![UNO Q SBC 模式硬件连接](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/IMG_20260529_100904-d5d4519486d4.jpg)
 
 ---
 
@@ -91,7 +91,7 @@ SBC 模式的意义在于：Codex CLI 和 Arduino App Lab 都运行在 UNO Q 自
 df -h
 ```
 
-![使用 df -h 查看磁盘空间](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/5C5CCF2F@08F8BD1A.B8F4186A00000000.png)
+![使用 df -h 查看磁盘空间](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/5C5CCF2F-08F8BD1A.B8F4186A00000000-8c06da01c432.png)
 
 根据结果，根目录 `/` 剩余空间约 `1.8G`，用户目录 `/home/arduino` 剩余空间约 `17G`。因此后续项目和虚拟环境都放在用户目录下，这样不会过多占用根分区。
 
@@ -107,7 +107,7 @@ df -h
 sudo apt install python3-venv python3.13-venv -y
 ```
 
-![安装 Python venv 依赖](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/92E26B02@4FB9212D.B8F4186A00000000.png)
+![安装 Python venv 依赖](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/92E26B02-4FB9212D.B8F4186A00000000-25a2f163dc57.png)
 
 安装完成后，系统补齐了 `python3-venv`、`python3.13-venv`、`python3-pip-whl` 和 `python3-setuptools-whl` 等组件。由于 UNO Q 的 Debian 系统是 ARM64 环境，安装软件时要注意选择支持 ARM64 的包。
 
@@ -127,7 +127,7 @@ python3 -m venv codex_env
 source codex_env/bin/activate
 ```
 
-![创建 codex_project 并激活虚拟环境](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/64FD05FB@93A71E08.B8F4186A00000000.png)
+![创建 codex_project 并激活虚拟环境](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/64FD05FB-93A71E08.B8F4186A00000000-d5ddd975461c.png)
 
 虚拟环境激活后，终端提示符前出现：
 
@@ -137,7 +137,7 @@ source codex_env/bin/activate
 
 这说明当前终端已经进入虚拟环境。之后安装和运行 Codex 时，都在这个目录下完成，便于后续管理。
 
-![codex_project 目录属性](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/CA36640C@2BB16433.B8F4186A00000000.png)
+![codex_project 目录属性](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/CA36640C-2BB16433.B8F4186A00000000-b78eefcb4974.png)
 
 从目录属性可以看到，`codex_project` 占用空间不大，说明 Codex CLI 和基础配置对 UNO Q 的存储压力比较小。这里比较关键，因为 UNO Q 虽然可以运行完整 Debian 系统，但根分区空间并不算特别宽裕。如果安装的是一个很重的本地 AI 模型或完整 IDE，很容易占用大量存储空间，也会给内存和处理器带来明显压力。
 
@@ -172,7 +172,7 @@ Codex 安装后占用空间小，主要原因是它在板端安装的不是大�
 写入 API 认证信息
 ```
 
-![Codex CLI 安装和配置完成](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/C32C2A0A@1B91C852.B8F4186A00000000.png)
+![Codex CLI 安装和配置完成](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/C32C2A0A-1B91C852.B8F4186A00000000-4ebc228e21ba.png)
 
 安装结果显示：
 
@@ -232,7 +232,7 @@ hello
 
 Codex 正常回复，说明 CLI 已经可以在 UNO Q 的 Debian 系统中使用。
 
-![Codex CLI 首次运行并完成 hello 对话](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/BE618C64@9481C56B.B8F4186A00000000.png)
+![Codex CLI 首次运行并完成 hello 对话](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/BE618C64-9481C56B.B8F4186A00000000-14fe9822e5cf.png)
 
 ---
 
@@ -253,7 +253,7 @@ sketch.yaml
 .gitignore
 ```
 
-![Codex 读取 App Lab 项目文件](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/08DCBE2A@0EB2FD00.B8F4186A00000000.png)
+![Codex 读取 App Lab 项目文件](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/08DCBE2A-0EB2FD00.B8F4186A00000000-91bd3bb7d684.png)
 
 Codex 对项目结构的理解如下：
 
@@ -286,7 +286,7 @@ python/led_text.txt
 +Arduino UNO Q
 ```
 
-![Codex 修改 led_text.txt 并触发 App 更新](https://raw.githubusercontent.com/sysuwilliam/arduino-UNO-Q-4GB/main/%E5%BC%80%E5%8F%91%E6%8A%A5%E5%91%8A/3_pictures/5F09C9CC@09C38E7E.B8F4186A00000000.png)
+![Codex 修改 led_text.txt 并触发 App 更新](/media/articles/arduino-uno-q-4gb/03-sbc-debian-codex-cli/5F09C9CC-09C38E7E.B8F4186A00000000-046fc3abf6d7.png)
 
 App Lab 运行日志中随后出现：
 

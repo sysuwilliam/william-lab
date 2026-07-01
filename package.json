@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
     "build": "astro build",
+    "cache:images": "node scripts/cache-article-images.mjs",
+    "sync:projects": "node scripts/sync-project-readmes.mjs",
     "preview": "astro preview --host 127.0.0.1"
   },
   "dependencies": {
