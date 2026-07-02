@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
-import TerminalPanel from "@components/TerminalPanel.astro";
 
 const [articles, projects, resources] = await Promise.all([
   getCollection("articles", ({ data }) => !data.draft),
@@ -36,24 +35,6 @@ const toolTags = [
 ---
 
 <BaseLayout title="关于" description="William Lab 的个人简介、方向、项目入口和联系方式。">
-  <section class="hero about-hero">
-    <div>
-      <p class="eyebrow">/about</p>
-      <h1>William Lab</h1>
-      <p class="lead">
-        我是 William，一名电子信息本科生。这里整理我的项目、文章、工程记录和随笔，
-        主要围绕开发板、嵌入式链路、视觉部署和机器人相关学习展开。
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href="mailto:sysuwilliam12@gmail.com">email</a>
-        <a class="button" href="https://github.com/sysuwilliam">github</a>
-        <a class="button" href={withBase("projects/")}>projects</a>
-        <a class="button" href={withBase("articles/")}>articles</a>
-      </div>
-    </div>
-    <TerminalPanel title="about.profile" />
-  </section>
-
   <section class="section compact-section">
     <div class="about-grid">
       <article class="card about-card">
