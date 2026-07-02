@@ -1,34 +1,178 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import TerminalPanel from "@components/TerminalPanel.astro";
+
+const [articles, projects, resources] = await Promise.all([
+  getCollection("articles", ({ data }) => !data.draft),
+  getCollection("projects", ({ data }) => !data.draft),
+  getCollection("resources", ({ data }) => !data.draft)
+]);
+
+const seriesCount = new Set(articles.filter((article) => article.data.series).map((article) => article.id.split("/")[0])).size;
+const publicProjects = projects.filter((project) => !project.data.private && !project.data.tags.includes("private"));
+const teamProjects = projects.filter((project) => project.data.team);
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
+
+const focusItems = [
+  "开发板 bring-up、外设调试和工程记录",
+  "嵌入式链路、BLE / UART 数据通路和移动端展示",
+  "Linux 单板机环境、OpenCV 服务和视觉部署",
+  "ROS 2、机器人项目资料整理和技术写作"
+];
+
+const toolTags = [
+  "C",
+  "Python",
+  "Zephyr",
+  "ESP-IDF",
+  "Renesas FSP",
+  "ROS 2",
+  "OpenCV",
+  "Astro",
+  "GitHub Actions"
+];
 ---
 
-<BaseLayout title="关于" description="About this personal website.">
-  <section class="hero">
+<BaseLayout title="关于" description="William Lab 的个人简介、方向、项目入口和联系方式。">
+  <section class="hero about-hero">
     <div>
       <p class="eyebrow">/about</p>
-      <h1>关于这个站点</h1>
+      <h1>William Lab</h1>
       <p class="lead">
-        William Lab 用来整理开发板评测、嵌入式链路、视觉部署和公开项目。
-        站点优先记录真实工程过程：环境、命令、问题、验证结果和可复现的项目入口。
+        我是 William，一名电子信息本科生。这里整理我的项目、文章、工程记录和随笔，
+        主要围绕开发板、嵌入式链路、视觉部署和机器人相关学习展开。
       </p>
+      <div class="hero-actions">
+        <a class="button primary" href="mailto:sysuwilliam12@gmail.com">email</a>
+        <a class="button" href="https://github.com/sysuwilliam">github</a>
+        <a class="button" href={withBase("projects/")}>projects</a>
+        <a class="button" href={withBase("articles/")}>articles</a>
+      </div>
     </div>
-    <TerminalPanel title="about.session" />
+    <TerminalPanel title="about.profile" />
   </section>
 
-  <section class="section prose">
-    <h2>当前关注</h2>
-    <ul>
-      <li>Arduino UNO Q 4GB 的 Linux、OpenCV 和 AI 部署实验</li>
-      <li>FRDM-MCXN947 的温湿度蓝牙链路</li>
-      <li>RA4M2-SENSOR 的 FSP、VS Code 和 Zephyr RTOS 开发记录</li>
-      <li>GitHub 公开项目索引和团队项目展示</li>
-    </ul>
+  <section class="section compact-section">
+    <div class="about-grid">
+      <article class="card about-card">
+        <p class="eyebrow">profile</p>
+        <h2>基本信息</h2>
+        <dl class="profile-list">
+          <div>
+            <dt>身份</dt>
+            <dd>电子信息本科生</dd>
+          </div>
+          <div>
+            <dt>院校</dt>
+            <dd>中山大学</dd>
+          </div>
+          <div>
+            <dt>邮箱</dt>
+            <dd><a href="mailto:sysuwilliam12@gmail.com">sysuwilliam12@gmail.com</a></dd>
+          </div>
+          <div>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/sysuwilliam">github.com/sysuwilliam</a></dd>
+          </div>
+        </dl>
+      </article>
 
-    <h2>站点原则</h2>
-    <p>
-      保持内容优先、结构清楚、页面轻量。极客感来自真实的工程记录、可读的排版和准确的链接，
-      而不是过度装饰。
-    </p>
+      <article class="card about-card">
+        <p class="eyebrow">now</p>
+        <h2>当前方向</h2>
+        <ul class="clean-list">
+          {focusItems.map((item) => <li>{item}</li>)}
+        </ul>
+      </article>
+    </div>
   </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">site index</p>
+        <h2>站内内容</h2>
+      </div>
+    </div>
+    <div class="grid about-stats">
+      <a class="card" href={withBase("articles/")}>
+        <span class="resource-kind">articles</span>
+        <h3>{articles.length} 篇文章</h3>
+        <p>开发板报告、工程调试过程、部署记录和阶段性总结。</p>
+      </a>
+      <a class="card" href={withBase("articles/")}>
+        <span class="resource-kind">series</span>
+        <h3>{seriesCount} 个专栏</h3>
+        <p>按开发板和主题把文章组织成可连续阅读的记录。</p>
+      </a>
+      <a class="card" href={withBase("projects/")}>
+        <span class="resource-kind">projects</span>
+        <h3>{publicProjects.length} 个公开项目</h3>
+        <p>GitHub 仓库、团队项目、学习项目和项目 README 入口。</p>
+      </a>
+      <a class="card" href={withBase("resources/")}>
+        <span class="resource-kind">resources</span>
+        <h3>{resources.length} 个资源入口</h3>
+        <p>站点源码、文章索引和公开资料入口。</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="about-grid">
+      <article class="card about-card">
+        <p class="eyebrow">bench</p>
+        <h2>常用工作台</h2>
+        <div class="tag-row about-tags">
+          {toolTags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+        <p>
+          目前更多时间花在真实硬件、调试链路和可复现记录上：把接线、环境、命令、错误和验证结果写清楚，
+          方便之后回看，也方便别人复现。
+        </p>
+      </article>
+
+      <article class="card about-card">
+        <p class="eyebrow">contact</p>
+        <h2>交流方向</h2>
+        <ul class="clean-list">
+          <li>开发板评测、嵌入式实验和 Zephyr / ESP-IDF 相关问题</li>
+          <li>视觉识别、OpenCV 服务、YOLO 训练记录和部署实践</li>
+          <li>机器人队项目、ROS 2 学习路线和工程资料整理</li>
+          <li>个人网站、静态站部署和工程笔记组织方式</li>
+        </ul>
+        <p class="about-contact-line">
+          可以通过 <a href="mailto:sysuwilliam12@gmail.com">sysuwilliam12@gmail.com</a> 联系我。
+        </p>
+      </article>
+    </div>
+  </section>
+
+  {teamProjects.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">team work</p>
+          <h2>团队项目</h2>
+        </div>
+        <a class="button" href={withBase("projects/")}>project index</a>
+      </div>
+      <div class="list-grid">
+        {teamProjects.map((project) => (
+          <a class="card feature-card" href={withBase(`projects/${project.id}/`)}>
+            <div>
+              <span class="resource-kind">{project.data.role ?? "team"}</span>
+              <h3>{project.data.title}</h3>
+              <p>{project.data.description}</p>
+            </div>
+            <div class="card-meta">
+              {project.data.stack.slice(0, 4).map((item) => <span class="tag">{item}</span>)}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>

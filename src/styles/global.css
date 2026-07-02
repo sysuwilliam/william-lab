@@ -1074,6 +1074,90 @@ h3 {
   font-size: 0.78rem;
 }
 
+.about-hero h1 {
+  max-width: none;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.about-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.about-card h2 {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+}
+
+.profile-list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.profile-list div {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: baseline;
+}
+
+.profile-list dt {
+  color: var(--soft);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.profile-list dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.clean-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clean-list li {
+  position: relative;
+  padding-left: 1rem;
+  color: #b7c5cf;
+}
+
+.clean-list li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(155, 229, 100, 0.24);
+}
+
+.about-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.about-tags {
+  margin-top: 0;
+}
+
+.about-contact-line {
+  margin-top: 0.2rem !important;
+  color: var(--muted);
+}
+
 .muted {
   color: var(--muted);
 }
@@ -1161,6 +1245,8 @@ h3 {
   .hero,
   .grid,
   .series-grid,
+  .about-grid,
+  .about-stats,
   .feature-card,
   .article-row,
   .stats-panel,
