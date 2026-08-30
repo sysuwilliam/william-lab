@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import TerminalPanel from "@components/TerminalPanel.astro";
+import StatsPanel from "@components/StatsPanel.astro";
 import VisitCounter from "@components/VisitCounter.astro";
 import { siteConfig } from "../site.config";
 
@@ -10,15 +11,15 @@ const allProjects = await getCollection("projects", ({ data }) => !data.draft);
 const allResources = await getCollection("resources", ({ data }) => !data.draft);
 
 const isPrivateProject = (project: (typeof allProjects)[number]) => project.data.private || project.data.tags.includes("private");
-const projects = [...allProjects]
-  .filter((project) => !project.data.team && !isPrivateProject(project))
+const publicProjects = allProjects.filter((project) => !project.data.team && !isPrivateProject(project));
+const projects = [...publicProjects]
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
 const teamProjects = [...allProjects]
   .filter((project) => project.data.team)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 1);
+  .slice(0, 2);
 
 const resources = [...allResources]
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -48,10 +49,48 @@ for (const article of allArticles) {
   });
 }
 
-const seriesList = [...seriesMap.values()].sort((a, b) => {
+const seriesList = [...seriesMap.values()].map((series) => ({
+  ...series,
+  latestDate: Math.max(...series.articles.map((article) => article.data.date.valueOf()))
+})).sort((a, b) => {
   const priority = ["arduino-uno-q-4gb", "frdm-mcxn947", "ra4m2-sensor"];
-  return priority.indexOf(a.slug) - priority.indexOf(b.slug);
+  const aIndex = priority.indexOf(a.slug);
+  const bIndex = priority.indexOf(b.slug);
+  return (aIndex === -1 ? priority.length : aIndex) - (bIndex === -1 ? priority.length : bIndex);
 });
+
+const featuredArticles = [...allArticles]
+  .filter((article) => article.data.cover)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const heroStats = [
+  { label: "articles", value: allArticles.length, tone: "accent" as const },
+  { label: "series", value: seriesList.length, tone: "blue" as const },
+  { label: "public repos", value: publicProjects.length },
+  { label: "resources", value: allResources.length, tone: "muted" as const }
+];
+
+const focusItems = [
+  {
+    label: "embedded",
+    title: "板卡 bring-up",
+    description: "记录外设、烧录、调试器和 RTOS 工程验证过程。",
+    href: "articles/series/ra4m2-sensor/"
+  },
+  {
+    label: "links",
+    title: "数据链路",
+    description: "把传感器、UART、BLE 和移动端展示串成可复现链路。",
+    href: "articles/series/frdm-mcxn947/"
+  },
+  {
+    label: "vision",
+    title: "视觉部署",
+    description: "整理 OpenCV 服务、App Lab 和边缘 AI 训练部署记录。",
+    href: "articles/series/arduino-uno-q-4gb/"
+  }
+];
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const withBase = (path: string) => `${base}${path.replace(/^\//, "")}`;
@@ -65,23 +104,70 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
       <p class="eyebrow reveal" style="--delay: 0ms">~/public-notes</p>
       <h1 class="reveal" style="--delay: 70ms">William Lab</h1>
       <p class="lead reveal" style="--delay: 140ms">
-        欢迎来到我的个人网站，这个网站用于展示我的项目、文章、工程记录和随笔。
+        一个面向嵌入式、开发板评测、视觉部署和工程复盘的公开笔记本。
+        这里展示我正在做的项目、可复现的文章记录，以及能继续追踪的资源入口。
         <br />
         邮箱：sysuwilliam12@gmail.com
       </p>
       <div class="hero-actions reveal" style="--delay: 210ms">
-        <a class="button primary" href={withBase("articles/")}>read articles</a>
+        <a class="button primary" href={withBase("articles/")}>latest notes</a>
         <a class="button" href={withBase("projects/")}>view projects</a>
         <a class="button" href="https://github.com/sysuwilliam">github</a>
       </div>
-      <div class="hero-metrics reveal" style="--delay: 250ms">
+      <div class="hero-stats reveal" style="--delay: 250ms">
+        <StatsPanel items={heroStats} compact />
+      </div>
+      <div class="focus-strip reveal" style="--delay: 280ms">
+        {focusItems.map((item) => (
+          <a class="focus-chip" href={withBase(item.href)}>
+            <span>{item.label}</span>
+            <strong>{item.title}</strong>
+            <small>{item.description}</small>
+          </a>
+        ))}
+      </div>
+      <div class="hero-metrics reveal" style="--delay: 310ms">
         <VisitCounter />
       </div>
     </div>
-    <div class="hero-terminal reveal" style="--delay: 280ms">
+    <div class="hero-terminal reveal" style="--delay: 330ms">
       <TerminalPanel title="profile.session" />
     </div>
   </section>
+
+  {featuredArticles.length > 0 && (
+    <section class="section compact-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">field notes</p>
+          <h2>近期工程记录</h2>
+          <p>优先露出带真实硬件或界面截图的记录，让首页一眼能看到最近在折腾什么。</p>
+        </div>
+        <a class="button" href={withBase("articles/")}>article index</a>
+      </div>
+      <div class="grid media-grid">
+        {featuredArticles.map((article) => (
+          <a class="card media-card" href={urlFor("articles", article.id)}>
+            <img
+              src={withBase(article.data.cover ?? "")}
+              alt={article.data.coverAlt ?? article.data.title}
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="media-card-body">
+              <span class="resource-kind">{article.data.series ?? "notes"}</span>
+              <h3>{article.data.title}</h3>
+              <p>{article.data.description}</p>
+              <div class="card-meta">
+                <span class="tag">{article.data.date.toLocaleDateString("zh-CN")}</span>
+                {article.data.tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="section-head">
@@ -99,6 +185,7 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
           <p>{series.description}</p>
           <div class="card-meta">
             <span class="tag">{series.articles.length} articles</span>
+            <span class="tag">updated {new Date(series.latestDate).toLocaleDateString("zh-CN")}</span>
             {series.tags.slice(0, 4).map((tag) => <span class="tag">{tag}</span>)}
           </div>
         </a>
@@ -120,6 +207,7 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
           <h3>{project.data.title}</h3>
           <p>{project.data.description}</p>
           <div class="card-meta">
+            <span class="tag">{project.data.date.toLocaleDateString("zh-CN")}</span>
             <span class={`status ${project.data.status}`}>{project.data.status}</span>
             {project.data.stack.slice(0, 3).map((item) => <span class="tag">{item}</span>)}
           </div>
@@ -146,6 +234,7 @@ const resourceUrl = (url: string) => url.startsWith("/") ? withBase(url) : url;
               <p>{project.data.description}</p>
             </div>
             <div class="card-meta">
+              <span class="tag">{project.data.date.toLocaleDateString("zh-CN")}</span>
               <span class={`status ${project.data.status}`}>{project.data.status}</span>
               {project.data.stack.map((item) => <span class="tag">{item}</span>)}
             </div>

@@ -3,6 +3,8 @@ title: "Zephyr开发RA4M2双工程总结"
 description: "Zephyr 是面向资源受限嵌入式设备的开源实时操作系统，官方文档明确指出它适用于从简单传感器、LED 设备到更复杂的 IoT 控制器场景。12"
 date: 2026-06-23
 tags: ["RA4M2", "Renesas", "Zephyr", "RTOS"]
+cover: "/media/articles/ra4m2-sensor/01/IMG_20260414_223459-32c5bc54511e.jpg"
+coverAlt: "RA4M2-SENSOR development board on a desk"
 draft: false
 series: "RA4M2-SENSOR"
 board: "RA4M2-SENSOR"

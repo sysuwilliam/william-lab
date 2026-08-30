@@ -39,7 +39,9 @@ for (const article of articles) {
 
 const seriesList = [...seriesMap.values()].sort((a, b) => {
   const priority = ["arduino-uno-q-4gb", "frdm-mcxn947", "ra4m2-sensor"];
-  return priority.indexOf(a.slug) - priority.indexOf(b.slug);
+  const aIndex = priority.indexOf(a.slug);
+  const bIndex = priority.indexOf(b.slug);
+  return (aIndex === -1 ? priority.length : aIndex) - (bIndex === -1 ? priority.length : bIndex);
 });
 
 const latestArticles = [...articles]

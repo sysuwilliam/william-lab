@@ -22,14 +22,31 @@ const isPrivateProject = project.data.private || project.data.tags.includes("pri
   tags={project.data.tags}
   canonicalPath={`/projects/${project.id}/`}
 >
-  <div class="card">
-    {isPrivateProject ? (
-      <p><strong>Visibility:</strong> <span class="status archived">private</span></p>
-    ) : (
-      <p><strong>Repository:</strong> <a href={project.data.repo}>{project.data.repo}</a></p>
+  <div class="card content-meta-card project-brief">
+    <div class="content-meta-grid">
+      <p>
+        <strong>Status</strong>
+        <span class={`status ${project.data.status}`}>{project.data.status}</span>
+      </p>
+      <p>
+        <strong>Visibility</strong>
+        <span>{isPrivateProject ? "private" : "public repo"}</span>
+      </p>
+      <p>
+        <strong>Role</strong>
+        <span>{project.data.role ?? (project.data.team ? "team" : "solo")}</span>
+      </p>
+      <p>
+        <strong>Stack</strong>
+        <span>{project.data.stack.join(" / ")}</span>
+      </p>
+    </div>
+    {!isPrivateProject && (
+      <div class="content-action-row">
+        <a class="button primary" href={project.data.repo}>repository</a>
+        {project.data.homepage && <a class="button" href={project.data.homepage}>homepage</a>}
+      </div>
     )}
-    {!isPrivateProject && project.data.homepage && <p><strong>Homepage:</strong> <a href={project.data.homepage}>{project.data.homepage}</a></p>}
-    <p><strong>Status:</strong> <span class={`status ${project.data.status}`}>{project.data.status}</span></p>
   </div>
   <Content />
 </ContentLayout>

@@ -139,6 +139,10 @@ code {
   text-decoration: none;
 }
 
+.brand span:last-child {
+  white-space: nowrap;
+}
+
 .brand:hover {
   transform: translateY(-1px);
 }
@@ -285,6 +289,56 @@ h3 {
   align-items: center;
   gap: 0.7rem;
   margin-top: 0.8rem;
+}
+
+.hero-stats {
+  max-width: 46rem;
+  margin-top: 1.15rem;
+}
+
+.focus-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  max-width: 46rem;
+  margin-top: 0.8rem;
+}
+
+.focus-chip {
+  display: grid;
+  gap: 0.16rem;
+  min-height: 8.2rem;
+  border: 1px solid rgba(34, 48, 58, 0.92);
+  border-radius: 8px;
+  padding: 0.72rem;
+  background: rgba(16, 22, 29, 0.5);
+  text-decoration: none;
+}
+
+.focus-chip:hover {
+  border-color: rgba(155, 229, 100, 0.34);
+  background: rgba(20, 28, 36, 0.72);
+  transform: translateY(var(--hover-lift));
+}
+
+.focus-chip span,
+.focus-chip small {
+  color: var(--soft);
+  font-family: var(--font-mono);
+}
+
+.focus-chip span {
+  font-size: 0.72rem;
+}
+
+.focus-chip strong {
+  color: var(--text);
+  font-size: 0.98rem;
+}
+
+.focus-chip small {
+  font-size: 0.72rem;
+  line-height: 1.55;
 }
 
 .visit-counter {
@@ -732,6 +786,10 @@ h3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.media-grid {
+  align-items: stretch;
+}
+
 .card {
   position: relative;
   isolation: isolate;
@@ -783,6 +841,39 @@ h3 {
   gap: 0.85rem;
 }
 
+.media-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  min-height: 100%;
+  padding: 0;
+}
+
+.media-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-bottom: 1px solid var(--line);
+  padding: 0.5rem;
+  background:
+    linear-gradient(135deg, rgba(155, 229, 100, 0.04), transparent 42%),
+    #0b1117;
+  object-fit: contain;
+}
+
+.media-card-body {
+  display: grid;
+  align-content: start;
+  padding: 1rem;
+}
+
+.media-card-body p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
 .feature-card {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -805,6 +896,11 @@ h3 {
 
 .content-meta-card p + p {
   margin-top: 0.35rem;
+}
+
+.project-brief {
+  display: grid;
+  gap: 0.95rem;
 }
 
 .content-meta-grid {
@@ -833,8 +929,19 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.content-meta-grid .status {
+  justify-self: start;
+  width: fit-content;
+}
+
 .source-line {
   margin-top: 0.9rem !important;
+}
+
+.content-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
 .card-meta,
@@ -1243,6 +1350,7 @@ h3 {
   }
 
   .hero,
+  .focus-strip,
   .grid,
   .series-grid,
   .about-grid,
@@ -1281,6 +1389,10 @@ h3 {
     align-items: start;
     grid-template-columns: 1fr;
     flex-direction: column;
+  }
+
+  .focus-chip {
+    min-height: auto;
   }
 }
 
